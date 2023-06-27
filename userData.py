@@ -2,55 +2,39 @@ import muscle
 import pandas as pd
 import sqlite3
 
-# create users table and muscles table and save it to data.db
-conn = sqlite3.connect('data.db')
-c = conn.cursor()
-c.execute("""CREATE TABLE IF NOT EXISTS users (
-            id integer PRIMARY KEY AUTOINCREMENT UNIQUE,
-            user_name TEXT,
-            height REAL,
-            weight REAL
-            )""")
-c.execute("""CREATE TABLE IF NOT EXISTS muscles (
-            user_id INTEGER,
-            muscle_name TEXT,
-            points REAL,
-            date REAL,
-            rest_time REAL,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-            )""")
-conn.commit()
-conn.close()
-
-
-# muscle_list = ['user_name', 'cardiopulmonary_endurance', 'chest', 'back',
-#                    'shoulders', 'biceps', 'triceps', 'quadriceps',
-#                    'hamstrings', 'calves', 'abdominal']
-#
-# new_list = ['user_name']
-# for elem in muscle_list[1:]:
-#     new_list.append(elem + '__point')
-#     new_list.append(elem + '__date')
-#     new_list.append(elem + '__rest')
-#
-# df = pd.DataFrame(columns=new_list)
-# df.to_csv('data.csv')
+def create_db():
+    # create users table and muscles table and save it to data.db
+    conn = sqlite3.connect('data.db')
+    c = conn.cursor()
+    c.execute("""CREATE TABLE IF NOT EXISTS users (
+                id integer PRIMARY KEY AUTOINCREMENT UNIQUE,
+                user_name TEXT,
+                height REAL,
+                weight REAL
+                )""")
+    c.execute("""CREATE TABLE IF NOT EXISTS muscles (
+                user_id INTEGER,
+                muscle_name TEXT,
+                points REAL,
+                date REAL,
+                rest_time REAL,
+                FOREIGN KEY (user_id) REFERENCES users(id)
+                )""")
+    conn.commit()
+    conn.close()
 
 
 class UserData:
-    id = 0
     muscle_list = ['cardiopulmonary_endurance', 'chest', 'back',
                    'shoulders', 'biceps', 'triceps', 'quadriceps',
                    'hamstrings', 'calves', 'abdominal']
 
     def __init__(self, username, weight=70, height=1.75):
         self.user_name = username
-        # self.values = self.get_data(username)
         self.height = height
         self.weight = weight
         self.values = [muscle.Muscle(name) for name in UserData.muscle_list]
-        self.id = UserData.id
-        UserData.id += 1
+        # self.id = UserData.id
 
     def get_name(self):
         return self.user_name
