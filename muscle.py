@@ -1,16 +1,29 @@
 from datetime import datetime
 
-class Muscle():
 
-    def __init__(self, points=0, date=0, rast_time=0):
+class Muscle:
+    def __init__(self, name, points=0, date=0, rest_time=0):
+        self.name = name
         self.points = points
         self.date = date
-        self.rast_time = rast_time
+        self.rest_time = rest_time
+
+    def get_name(self):
+        return self.name
+
+    def get_point(self):
+        return self.points
+
+    def get_date(self):
+        return self.date
+
+    def get_rest_time(self):
+        return self.rest_time
 
     def update_points(self, points, date, rast_time):
         self.points = points
         self.date = date
-        self.rast_time = rast_time
+        self.rest_time = rast_time
 
     # class cardiopulmonary_endurance(Muscle): # סיבולת לב-ריאה
     def running(self):
@@ -83,7 +96,7 @@ class Muscle():
         pass
 
     def getvalue(self):
-        return [self.points, self.date, self.rast_time]
+        return [self.points, self.date, self.rest_time]
 
 # Retrieve all classes that inherit from BaseClass
 subclasses = Muscle.__subclasses__()
