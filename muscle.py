@@ -11,7 +11,7 @@ class Muscle:
     def get_name(self):
         return self.name
 
-    def get_point(self):
+    def get_points(self):
         return self.points
 
     def get_date(self):
@@ -20,10 +20,10 @@ class Muscle:
     def get_rest_time(self):
         return self.rest_time
 
-    def update_points(self, points, date, rast_time):
+    def update_points(self, points, date, rest_time):
         self.points = points
         self.date = date
-        self.rest_time = rast_time
+        self.rest_time = rest_time
 
     # class cardiopulmonary_endurance(Muscle): # סיבולת לב-ריאה
     def running(self):
