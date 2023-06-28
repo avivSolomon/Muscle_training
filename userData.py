@@ -1,6 +1,7 @@
 import muscle
 import sqlite3
 
+
 def create_db():
     # create users table and muscles table and save it to data.db
     conn = sqlite3.connect('data.db')
@@ -72,9 +73,15 @@ class UserData:
     def save_data(self):
         conn = sqlite3.connect('data.db')
         c = conn.cursor()
-        c.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (self.id, self.user_name, self.height, self.weight))
+        c.execute("INSERT INTO users VALUES (?, ?, ?, ?)",
+                  (self.id, self.user_name, self.height, self.weight))
         for cur_muscle in self.values:
-            c.execute("INSERT INTO muscles VALUES (?, ?, ?, ?, ?)", (self.id, cur_muscle.get_name(), cur_muscle.get_point(), cur_muscle.get_date(), cur_muscle.get_rest_time()))
+            c.execute("INSERT INTO muscles VALUES (?, ?, ?, ?, ?)",
+                      (self.id,
+                       cur_muscle.get_name(),
+                       cur_muscle.get_point(),
+                       cur_muscle.get_date(),
+                       cur_muscle.get_rest_time()))
         conn.commit()
         conn.close()
 
@@ -92,18 +99,6 @@ class UserData:
             self.values[i].update_points(muscle_data[i][2], muscle_data[i][3], muscle_data[i][4])
         conn.close()
 
-
-    # def get_data(self, username, patch='data.csv'):
-    #     data = pd.read_csv(patch)
-    #     user_set = data['user_name']
-    #     if username in user_set:
-    #         user_val = data.loc[data.user_name == username].tolist()[1:]
-    #         return {UserData.muscle_list[i]: muscle.Muscle(tuple(user_val[i * 3:(i + 1) * 3])) \
-    #                 for i in range(len(UserData.muscle_list))}
-    #     else:
-    #         return {k: muscle.Muscle() for k in UserData.muscle_list}
-    #
-    #
     def print_val(self):
         for cur_muscle in self.values:
             print(f'muscle name: {cur_muscle.get_name()}\n\t point: {cur_muscle.get_point()}, recent trained at: {cur_muscle.get_date()}, restin time left: {cur_muscle.get_rest_time()}')
