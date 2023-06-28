@@ -1,4 +1,4 @@
-from users import UserData
+from users import User
 import data_base
 import muscle
 from gym_manager import GymManager
