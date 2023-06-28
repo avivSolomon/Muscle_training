@@ -2,8 +2,7 @@ from muscle import Muscle
 import data_base
 import sqlite3
 
-
-class UserData:
+class User:
     muscle_list = ['cardiopulmonary_endurance', 'chest', 'back',
                    'shoulders', 'biceps', 'triceps', 'quadriceps',
                    'hamstrings', 'calves', 'abdominal']
@@ -13,7 +12,8 @@ class UserData:
         self.user_name = username
         self.height = height
         self.weight = weight
-        self.muscles = [Muscle(name) for name in UserData.muscle_list]
+        self.bmi = self.weight / (self.height ** 2)
+        self.muscles = [Muscle(name) for name in User.muscle_list]
 
     def __str__(self):
         return "user_id: " + str(self.user_id) + "\n" + \
@@ -76,30 +76,8 @@ class UserData:
         conn.commit()
         conn.close()
 
-    def load_data(self):
-        conn = sqlite3.connect('data.db')
-        c = conn.cursor()
-        c.execute("SELECT * FROM users WHERE user_name=?", (self.user_name,))
-        user_data = c.fetchone()
-        self.user_id = user_data[0]
-        self.height = user_data[2]
-        self.weight = user_data[3]
-        c.execute("SELECT * FROM muscles WHERE user_id=?", (self.user_id,))
-        muscle_data = c.fetchall()
-        for i in range(len(muscle_data)):
-            self.muscles[i].update_points(muscle_data[i][2], muscle_data[i][3], muscle_data[i][4])
-        conn.close()
-
     def print_val(self):
         for cur_muscle in self.muscles:
             print(f'muscle name: {cur_muscle.get_name()}\n\t point: {cur_muscle.get_points()}, recent trained at: {cur_muscle.get_date()}, restin time left: {cur_muscle.get_rest_time()}')
-
-if __name__ == '__main__':
-    ari = UserData('ari')
-    # ari.update_muscle('chest', 10, 2020, 10)
-    # ari.load_data()
-    # ari.save_data()
-    ari.print_val()
-
 
 

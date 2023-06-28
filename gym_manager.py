@@ -1,6 +1,6 @@
 import sqlite3
 from muscle import Muscle
-from users import UserData
+from users import User
 
 
 class GymManager:
@@ -9,7 +9,7 @@ class GymManager:
 
     def create_user(self, user_name, height, weight):
         new_user_id = len(self.users)
-        new_user = UserData(new_user_id, user_name, height, weight)
+        new_user = User(new_user_id, user_name, height, weight)
         self.users.append(new_user)
         # update data.db
         new_user.save_data()
@@ -42,7 +42,7 @@ class GymManager:
         # load users
         c.execute("SELECT * FROM users")
         for row in c.fetchall():
-            new_user = UserData(row[0], row[1], row[2], row[3])
+            new_user = User(row[0], row[1], row[2], row[3])
             self.users.append(new_user)
         # load muscles
         c.execute("SELECT * FROM muscles")
