@@ -1,6 +1,5 @@
 from datetime import date, timedelta
 import sqlite3
-import time
 
 
 class Muscle:

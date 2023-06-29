@@ -44,12 +44,12 @@ def main():
     # for user in user_list:
     #     print(user)
     # # show all data
-    # ari_train = Exercise(gym_manager, 0).running(10)
+    ari_train = Exercise(gym_manager, 0).running(10).
     # ari = gym_manager.get_user(0)
     # ari.print_val()
     data_base.show_all_data()
 
-    # create a new exercise
+
 
 
 
