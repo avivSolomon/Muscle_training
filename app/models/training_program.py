@@ -29,7 +29,7 @@ class TrainingProgram:
         program_details += "Exercises:\n"
 
         for exercise in self.exercises:
-            program_details += f"- {exercise.name}\n"
+            program_details += f"- {exercise.get_name()}\n"
 
         return program_details
 

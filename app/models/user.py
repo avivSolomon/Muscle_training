@@ -4,8 +4,17 @@ class User:
         self.email = email
         self.password = password
 
+        # self.height = height
+        # self.weight = weight
+        # self.bmi = self.weight / ((self.height / 100) ** 2)
+        # self.muscles = [Muscle(name) for name in User.muscle_list]
+        # self.program = program
+
     def get_name(self):
         return self.name
+
+    def set_name(self, name):
+        self.name = name
 
     def get_email(self):
         return self.email

@@ -6,20 +6,23 @@ class UserView:
 
     def register_user(self):
         name = input("Enter your name: ")
-        email = input("Enter your email: ")
+        while True:
+            email = input("Enter your email: ")
+            # Validate inputs
+            if not self.user_controller.is_valid_email(email):
+                print("Invalid email format.")
+            else:
+                break
         password = input("Enter your password: ")
 
-        # Validate inputs
-        if not self.user_controller.is_valid_email(email):
-            print("Invalid email format.")
-            return
-
-        # Create a new User instance
-        new_user = self.user_controller.create_user(name, email, password)
-
-        # Store user details in the database
-        self.user_controller.save_user(new_user)
-        print("User registered successfully.")
+        if ...:
+            ...
+        else:
+            # Create a new User instance
+            new_user = self.user_controller.create_user(name, email, password)
+            # Store user details in the database
+            self.user_controller.save_user(new_user)
+            print("User registered successfully.")
 
     def login_user(self):
         email = input("Enter your email: ")
