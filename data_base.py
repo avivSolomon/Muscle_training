@@ -15,8 +15,15 @@ def create_database():
                 user_id INTEGER,
                 muscle_name TEXT,
                 points REAL,
-                date REAL,
-                rest_time REAL,
+                workout_date DATE,
+                rest_time DATE,
+                FOREIGN KEY (user_id) REFERENCES users(user_id)
+                )""")
+    c.execute("""CREATE TABLE IF NOT EXISTS exercise_data (
+                user_id INTEGER,
+                exercise_name TEXT,
+                points REAL,
+                exercise_date DATE,
                 FOREIGN KEY (user_id) REFERENCES users(user_id)
                 )""")
     conn.commit()
@@ -29,6 +36,8 @@ def show_all_data():
     c.execute("SELECT * FROM users")
     print(c.fetchall())
     c.execute("SELECT * FROM muscles")
+    print(c.fetchall())
+    c.execute("SELECT * FROM exercise_data")
     print(c.fetchall())
     conn.close()
 
