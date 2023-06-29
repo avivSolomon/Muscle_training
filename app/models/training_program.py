@@ -1,8 +1,9 @@
 class TrainingProgram:
-    def __init__(self, name, duration):
+
+    def __init__(self, name, duration, exercises):
         self.name = name
         self.duration = duration
-        self.exercises = []
+        self.exercises = exercises
 
     def get_name(self):
         return self.name
@@ -19,6 +20,12 @@ class TrainingProgram:
 
     def get_exercises(self):
         return self.exercises
+
+    def get_exercise_of_program(self, exercise_name):
+        for cur_exercise in self.exercises:
+            if cur_exercise.get_name() == exercise_name:
+                return cur_exercise
+        return None
 
     def clear_exercises(self):
         self.exercises = []

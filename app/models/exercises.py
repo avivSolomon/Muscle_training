@@ -1,8 +1,9 @@
 class Exercise:
-    def __init__(self, name, duration, intensity):
+    def __init__(self, name, duration=3, intensity=15):
         self.name = name
         self.duration = duration
         self.intensity = intensity
+        self.Value_points = duration * intensity
 
     def get_name(self):
         return self.name
