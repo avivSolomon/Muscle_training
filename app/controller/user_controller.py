@@ -1,38 +1,33 @@
-from app.views.user_view import UserView
+from app.models.user import User
+
 
 class UserController:
     def __init__(self):
-        self.user_view = UserView()
+        self.current_user = None
 
-    def register_user(self):
-        self.user_view.register_user()
+    def is_valid_email(self, email):
+        # Implement email validation logic
+        return "@" in email
 
-    def login_user(self):
-        self.user_view.login_user()
+    def create_user(self, name, email, password):
+        # Create a new User instance
+        return User(name, email, password)
 
-    def manage_profile(self):
-        self.user_view.manage_profile()
+    def save_user(self, user):
+        # Store user details in the database
+        # Implement the database storage logic here
+        pass
 
+    def authenticate_user(self, email, password):
+        # Authenticate user against stored credentials
+        # Implement the authentication logic here
+        self.current_user = ...
+        return True
 
-# Additional code for user controller functionality
+    def get_current_user(self):
+        return self.current_user
 
-if __name__ == "__main__":
-    user_controller = UserController()
-
-    while True:
-        print("\n1. Register User")
-        print("2. Login User")
-        print("3. Manage Profile")
-        print("4. Exit")
-
-        choice = input("Enter your choice: ")
-        if choice == "1":
-            user_controller.register_user()
-        elif choice == "2":
-            user_controller.login_user()
-        elif choice == "3":
-            user_controller.manage_profile()
-        elif choice == "4":
-            break
-        else:
-            print("Invalid choice. Please try again.")
+    def update_profile(self, new_name, new_email, new_password):
+        # Update the user's details in the database
+        # Implement the update logic here
+        pass

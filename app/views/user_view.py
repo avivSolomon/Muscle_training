@@ -43,16 +43,16 @@ class UserView:
         print(f"Name: {current_user.get_name()}")
         print(f"Email: {current_user.get_email()}")
 
-        # Allow the user to update their profile details (name, email, password)
-        choice = input("Do you want to update your profile? (yes/no): ")
-        if choice.lower() == "yes":
-            new_name = input("Enter your new name (or press Enter to skip): ")
-            new_email = input("Enter your new email (or press Enter to skip): ")
-            new_password = input("Enter your new password (or press Enter to skip): ")
-
-            # Update the user's details in the database
-            self.user_controller.update_profile(new_name, new_email, new_password)
-            print("Profile updated successfully.")
+        # # Allow the user to update their profile details (name, email, password)
+        # choice = input("Do you want to update your profile? (yes/no): ")
+        # if choice.lower() == "yes":
+        #     new_name = input("Enter your new name (or press Enter to skip): ")
+        #     new_email = input("Enter your new email (or press Enter to skip): ")
+        #     new_password = input("Enter your new password (or press Enter to skip): ")
+        #
+        #     # Update the user's details in the database
+        #     self.user_controller.update_profile(new_name, new_email, new_password)
+        #     print("Profile updated successfully.")
 
 
 # Additional code for user interface related to user management
