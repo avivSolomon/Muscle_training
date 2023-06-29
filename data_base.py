@@ -37,6 +37,8 @@ def show_all_data():
     print(c.fetchall())
     c.execute("SELECT * FROM muscles")
     print(c.fetchall())
+    c.execute("SELECT * FROM exercise_data")
+    print(c.fetchall())
     conn.close()
 
 
