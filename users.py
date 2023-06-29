@@ -9,12 +9,12 @@ class User:
                    'shoulders', 'biceps', 'triceps', 'quadriceps',
                    'hamstrings', 'calves', 'abdominal']
 
-    def __init__(self, user_id, username, height=1.75, weight=70):
+    def __init__(self, user_id, username, height=175, weight=70):
         self.user_id = user_id
         self.user_name = username
         self.height = height
         self.weight = weight
-        self.bmi = self.weight / (self.height ** 2)
+        self.bmi = self.weight / ((self.height/100) ** 2)
         self.muscles = [Muscle(name) for name in User.muscle_list]
 
     def __str__(self):
@@ -37,6 +37,9 @@ class User:
     def get_weight(self):
         return self.weight
 
+    def get_bmi(self):
+        return self.bmi
+
     def get_muscle(self, muscle_name):
         for cur_muscle in self.muscles:
             if cur_muscle.get_name() == muscle_name:
@@ -46,21 +49,26 @@ class User:
     def get_muscle_list(self):
         return self.muscles
 
-    def update_muscle(self, muscle_name, points, date=date.today()):
+    def update_muscle(self, muscle_name, points, workout_date=date.today()):
         for cur_muscle in self.muscles:
             if cur_muscle.get_name() == muscle_name:
-                cur_muscle.update_points(points, date)
+                cur_muscle.update_points(points, workout_date)
+                # update data.db
+                self.save_data()
                 return True
         return False
 
     def update_height(self, height):
         self.height = height
+        self.save_data()
 
     def update_weight(self, weight):
         self.weight = weight
+        self.save_data()
 
     def update_name(self, name):
         self.user_name = name
+        self.save_data()
 
     def save_data(self):
         conn = sqlite3.connect('data.db')
@@ -81,6 +89,6 @@ class User:
 
     def print_val(self):
         for cur_muscle in self.muscles:
-            print(f'muscle name: {cur_muscle.get_name()}\n\t point: {cur_muscle.get_points()}, recent trained at: {cur_muscle.get_workout_date()}, restin time left: {cur_muscle.get_rest_time()}')
+            print(cur_muscle)
 
 

@@ -3,19 +3,20 @@ from gym_manager import GymManager
 
 
 class Exercise:
-    def __init__(self, user_id):
+    def __init__(self, gym_manager, user_id):
+        self.gym_manager = gym_manager
         self.user_id = user_id
 
     def get_cur_muscle(self, muscle_name):
-        cur_muscle = GymManager.get_user(self.user_id).get_muscle(muscle_name)
+        cur_muscle = self.gym_manager.get_user(self.user_id).get_muscle(muscle_name)
         return cur_muscle, cur_muscle.get_points()
 
     # class cardiopulmonary_endurance(Muscle): # סיבולת לב-ריאה
     def running(self, points, train=True):
-        for mus in User.muscle_list:
-            cur_muscle, cur_point = Exercise.get_cur_muscle(self.user_id, mus)
-            if mus in ['cardiopulmonary_endurance', 'triceps', 'quadriceps',
-                       'hamstrings', 'calves']:
+        for muscle_name in User.muscle_list:
+            cur_muscle, cur_point = self.get_cur_muscle(muscle_name)
+            if muscle_name in ['cardiopulmonary_endurance', 'triceps', 'quadriceps',
+                               'hamstrings', 'calves']:
                 cur_muscle.update_points(cur_point + points)
             else:
                 cur_muscle.update_points(cur_point + 1)

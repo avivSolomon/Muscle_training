@@ -54,7 +54,7 @@ class GymManager:
             cur_muscle = cur_user.get_muscle(row[1])
             if cur_muscle is None:
                 continue
-            cur_muscle.update_points(row[2], datetime.strptime(row[3], date_format))
+            cur_muscle.update_points(row[2], datetime.strptime(row[3], date_format).date())
         conn.close()
 
     def save_data(self):

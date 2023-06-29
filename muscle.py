@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+import sqlite3
 import time
 
 
@@ -36,12 +37,21 @@ class Muscle:
         self.workout_date = workout_date
         day_rest = 0 if points<2 else 1 if points<3 else 2
         self.rest_time = self.workout_date + timedelta(days=day_rest)
+        self.save_muscle_data()
 
     def in_rest(self):
         return (self.rest_time - date.today()).days > 0
 
     def get_muscle_value(self):
         return [self.points, self.workout_date, self.rest_time]
+
+    def save_muscle_data(self):
+        conn = sqlite3.connect('data.db')
+        c = conn.cursor()
+        c.execute("UPDATE muscles SET points=?, workout_date=?, rest_time=? WHERE muscle_name=?",
+                  (self.points, self.workout_date, self.rest_time, self.name))
+        conn.commit()
+        conn.close()
 
 # Retrieve all classes that inherit from BaseClass
 subclasses = Muscle.__subclasses__()
