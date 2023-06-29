@@ -1,4 +1,4 @@
-from user_view import UserView
+from app.views.user_view import UserView
 
 class UserController:
     def __init__(self):
