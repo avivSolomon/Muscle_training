@@ -16,7 +16,7 @@ class Muscle:
     def __str__(self):
         return "name: " + self.name + "\n" + \
                "points: " + str(self.points) + "\n" + \
-               "date: " + str(self.date) + "\n" + \
+               "date: " + str(self.workout_date) + "\n" + \
                "rest_time: " + str(self.rest_time)
 
     def get_name(self):
