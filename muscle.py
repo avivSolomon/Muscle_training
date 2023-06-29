@@ -52,9 +52,3 @@ class Muscle:
                   (self.points, self.workout_date, self.rest_time, self.name))
         conn.commit()
         conn.close()
-
-# Retrieve all classes that inherit from BaseClass
-subclasses = Muscle.__subclasses__()
-# Create instances of each subclass
-# muscle_subclasses = [subclass() for subclass in subclasses]
-# print(muscle_subclasses)

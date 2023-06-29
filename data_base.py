@@ -19,6 +19,13 @@ def create_database():
                 rest_time DATE,
                 FOREIGN KEY (user_id) REFERENCES users(user_id)
                 )""")
+    c.execute("""CREATE TABLE IF NOT EXISTS exercise_data (
+                user_id INTEGER,
+                exercise_name TEXT,
+                points REAL,
+                exercise_date DATE,
+                FOREIGN KEY (user_id) REFERENCES users(user_id)
+                )""")
     conn.commit()
     conn.close()
 

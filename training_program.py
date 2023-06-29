@@ -23,7 +23,7 @@ def create_program(program_type):
              Exercise.rows, Exercise.lat_pulldowns, Exercise.bicep_curls,
              Exercise.hammer_curls]
 
-        b = [Exercise.bench_press, Exercise.push_ups, Exercise.chest_flyes,
+        b = [Exercise.bench_press, Exercise.push_ups, Exercise.chest_flies,
              Exercise.dumbbell_press, Exercise.shoulder_press, Exercise.lateral_raises,
              Exercise.front_raises, Exercise.triceps_dips, Exercise.triceps_pushdowns,
              Exercise.planks, Exercise.sit_ups, Exercise.russian_twists]
@@ -32,7 +32,7 @@ def create_program(program_type):
         a = [Exercise.squats, Exercise.lunges, Exercise.leg_press, Exercise.deadlifts,
              Exercise.hamstring_curls, Exercise.calf_raises, Exercise.pull_ups,
              Exercise.rows, Exercise.lat_pulldowns, Exercise.bicep_curls,
-             Exercise.hammer_curls, Exercise.bench_press, Exercise.push_ups, Exercise.chest_flyes,
+             Exercise.hammer_curls, Exercise.bench_press, Exercise.push_ups, Exercise.chest_flies,
              Exercise.dumbbell_press, Exercise.shoulder_press, Exercise.lateral_raises,
              Exercise.front_raises, Exercise.triceps_dips, Exercise.triceps_pushdowns,
              Exercise.planks, Exercise.sit_ups, Exercise.russian_twists]
