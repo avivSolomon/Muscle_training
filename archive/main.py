@@ -1,9 +1,6 @@
-from users import User
 import data_base
-import muscle
 from gym_manager import GymManager
 from exercises import Exercise
-from datetime import date
 
 
 def main():

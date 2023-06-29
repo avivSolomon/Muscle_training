@@ -1,17 +1,29 @@
-class TrainingProgramController:
-    def create_program(self):
-        training_program_view = TrainingProgramView()
-        program = training_program_view.create_program()
+from app.views.training_program_view import TrainingProgramView
 
-        return program
+class TrainingProgramController:
+    def __init__(self):
+        self.training_program_view = TrainingProgramView()
+
+    def create_program(self, name, duration):
+        return self.training_program_view.create_program(name, duration)
 
     def add_exercise_to_program(self, program, exercise):
-        training_program_view = TrainingProgramView()
-        training_program_view.add_exercise_to_program(program, exercise)
-
-    def display_program_details(self, program):
-        training_program_view = TrainingProgramView()
-        training_program_view.display_program_details(program)
+        self.training_program_view.add_exercise_to_program(program, exercise)
 
 
 # Additional code for training program controller functionality
+
+if __name__ == "__main__":
+    training_program_controller = TrainingProgramController()
+
+    while True:
+        print("\n1. Manage Training Program")
+        print("2. Exit")
+
+        choice = input("Enter your choice: ")
+        if choice == "1":
+            training_program_controller.manage_training_program()
+        elif choice == "2":
+            break
+        else:
+            print("Invalid choice. Please try again.")
