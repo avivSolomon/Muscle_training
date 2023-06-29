@@ -1,11 +1,36 @@
+import sqlite3
+
+
 class Database:
-    def __init__(self, connection_details):
-        # Establish a connection to the database
+    def __init__(self, db_name):
+        self.db_name = db_name
+        self.connection = None
+        self.cursor = None
 
-    def execute_query(self, query):
-        # Execute the provided SQL query
+    def connect(self):
+        self.connection = sqlite3.connect(self.db_name)
+        self.cursor = self.connection.cursor()
 
-    # Additional methods for database interaction
+    def disconnect(self):
+        if self.connection:
+            self.cursor.close()
+            self.connection.close()
 
+    def execute_query(self, query, parameters=None):
+        self.connect()
+        if parameters:
+            self.cursor.execute(query, parameters)
+        else:
+            self.cursor.execute(query)
+        self.connection.commit()
+        self.disconnect()
 
-# Additional code for database functionality
+    def execute_select_query(self, query, parameters=None):
+        self.connect()
+        if parameters:
+            self.cursor.execute(query, parameters)
+        else:
+            self.cursor.execute(query)
+        result = self.cursor.fetchall()
+        self.disconnect()
+        return result
