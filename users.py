@@ -3,6 +3,7 @@ import data_base
 import sqlite3
 from datetime import date
 
+
 class User:
     muscle_list = ['cardiopulmonary_endurance', 'chest', 'back',
                    'shoulders', 'biceps', 'triceps', 'quadriceps',
@@ -21,6 +22,7 @@ class User:
                "user_name: " + self.user_name + "\n" + \
                "height: " + str(self.height) + "\n" + \
                "weight: " + str(self.weight) + "\n" + \
+                "bmi: " + str(self.bmi) + "\n" + \
                "muscles: " + str(self.muscles)
 
     def get_id(self):

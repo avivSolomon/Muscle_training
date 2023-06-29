@@ -13,6 +13,12 @@ class Muscle:
         self.workout_date = workout_date
         self.rest_time = rest_time
 
+    def __str__(self):
+        return "name: " + self.name + "\n" + \
+               "points: " + str(self.points) + "\n" + \
+               "date: " + str(self.date) + "\n" + \
+               "rest_time: " + str(self.rest_time)
+
     def get_name(self):
         return self.name
 
