@@ -1,48 +1,58 @@
 from users import User
 from exercises import Exercise
 
+class Program_training:
 
-# Determining the recommendation based on BMI value
-def set_program_type(bmi):
-    if bmi < 20:
-        recommendation = "The recommendation for you is to do strength training mainly and gain weight. 1"
-    elif 20 <= bmi < 30:
-        recommendation = "The recommendation for you is to combine strength training and aerobic activity. 2"
-    else:
-        recommendation = "The recommendation for you is to do mainly aerobic activity. 3"
+    def __init__(self, gym_manager, user_id):
+        self.gym_manager = gym_manager
+        self.user_id = user_id
+        self.bmi = gym_manager.get_user(user_id).get_bmi()
 
-    program_type = input(recommendation)
-    return program_type
-
-
-def create_program(program_type):
-    a, b = [], []
-    if program_type == '1':
-        a = [Exercise.squats, Exercise.lunges, Exercise.leg_press, Exercise.deadlifts,
-             Exercise.hamstring_curls, Exercise.calf_raises, Exercise.pull_ups,
-             Exercise.rows, Exercise.lat_pulldowns, Exercise.bicep_curls,
-             Exercise.hammer_curls]
-
-        b = [Exercise.bench_press, Exercise.push_ups, Exercise.chest_flies,
-             Exercise.dumbbell_press, Exercise.shoulder_press, Exercise.lateral_raises,
-             Exercise.front_raises, Exercise.triceps_dips, Exercise.triceps_pushdowns,
-             Exercise.planks, Exercise.sit_ups, Exercise.russian_twists]
-
-    elif program_type == '2':
-        a = [Exercise.squats, Exercise.lunges, Exercise.leg_press, Exercise.deadlifts,
-             Exercise.hamstring_curls, Exercise.calf_raises, Exercise.pull_ups,
-             Exercise.rows, Exercise.lat_pulldowns, Exercise.bicep_curls,
-             Exercise.hammer_curls, Exercise.bench_press, Exercise.push_ups, Exercise.chest_flies,
-             Exercise.dumbbell_press, Exercise.shoulder_press, Exercise.lateral_raises,
-             Exercise.front_raises, Exercise.triceps_dips, Exercise.triceps_pushdowns,
-             Exercise.planks, Exercise.sit_ups, Exercise.russian_twists]
-
-        b = [Exercise.running, Exercise.cycling, Exercise.swimming]
-
-    elif program_type == '3':
-        a = [Exercise.running, Exercise.cycling, Exercise.swimming]
-        b = [exercise for exercise in a]
-    return a, b
+    # Determining the recommendation based on BMI value
+    def set_program_type(self):
+        program_type = 'a'
+        if self.bmi < 20:
+            recommendation = """The recommendation for you is to do strength \n
+                             training mainly and gain weight. 1"""
+        elif 20 <= self.bmi < 30:
+            recommendation = """The recommendation for you is to combine strength \n
+                             training and aerobic activity. 2"""
+        else:
+            recommendation = """The recommendation for you is to do mainly aerobic \n
+                              activity. 3"""
+        while program_type not in ['', '1', '2', '3']:
+            program_type = input(recommendation)
+        return int(program_type) if program_type != '' else int(recommendation[-1])
 
 
+    def create_program(self, program_type):
+        user = Exercise(self.gym_manager, self.user_id)
+        a, b = [], []
+        if program_type == 1:
+            a = [user.squats, user.lunges, user.leg_press, user.deadlifts,
+                 user.hamstring_curls, user.calf_raises, user.pull_ups,
+                 user.rows, user.lat_pulldowns, user.bicep_curls,
+                 user.hammer_curls]
+
+            b = [user.bench_press, user.push_ups, user.chest_flyes,
+                 user.dumbbell_press, user.shoulder_press, user.lateral_raises,
+                 user.front_raises, user.triceps_dips, user.triceps_pushdowns,
+                 user.planks, user.sit_ups, user.russian_twists]
+
+        elif program_type == 2:
+            a = [user.squats, user.lunges, user.leg_press, user.deadlifts,
+                 user.hamstring_curls, user.calf_raises, user.pull_ups,
+                 user.rows, user.lat_pulldowns, user.bicep_curls,
+                 user.hammer_curls, user.bench_press, user.push_ups, user.chest_flyes,
+                 user.dumbbell_press, user.shoulder_press, user.lateral_raises,
+                 user.front_raises, user.triceps_dips, user.triceps_pushdowns,
+                 user.planks, user.sit_ups, user.russian_twists]
+
+            b = [user.running, user.cycling, user.swimming]
+
+        elif program_type == 3:
+            a = [user.running, user.cycling, user.swimming]
+            b = [exercise for exercise in a]
+
+        return a, b
 
