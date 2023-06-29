@@ -1,7 +1,7 @@
-from user import User
-from user_controller import UserController
-from user_view import UserView
-from database import Database
+from app.models.user import User
+from app.controller.user_controller import UserController
+from app.views.user_view import UserView
+from app.database.database import Database
 
 # Create an instance of the Database class
 db = Database("users.db")

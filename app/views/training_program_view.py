@@ -1,4 +1,4 @@
-from training_program_controller import TrainingProgramController
+from app.controller.training_program_controller import TrainingProgramController
 
 class TrainingProgramView:
     def __init__(self):

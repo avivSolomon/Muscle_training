@@ -1,4 +1,4 @@
-from exercise_controller import ExerciseController
+from app.controller.exercise_controller import ExerciseController
 
 class ExerciseView:
     def __init__(self):
