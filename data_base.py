@@ -15,8 +15,8 @@ def create_database():
                 user_id INTEGER,
                 muscle_name TEXT,
                 points REAL,
-                date REAL,
-                rest_time REAL,
+                workout_date DATE,
+                rest_time DATE,
                 FOREIGN KEY (user_id) REFERENCES users(user_id)
                 )""")
     conn.commit()

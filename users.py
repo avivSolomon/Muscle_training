@@ -1,6 +1,7 @@
 from muscle import Muscle
 import data_base
 import sqlite3
+from datetime import date
 
 class User:
     muscle_list = ['cardiopulmonary_endurance', 'chest', 'back',
@@ -43,10 +44,10 @@ class User:
     def get_muscle_list(self):
         return self.muscles
 
-    def update_muscle(self, muscle_name, points, date, rest_time):
+    def update_muscle(self, muscle_name, points, date=date.today()):
         for cur_muscle in self.muscles:
             if cur_muscle.get_name() == muscle_name:
-                cur_muscle.update_points(points, date, rest_time)
+                cur_muscle.update_points(points, date)
                 return True
         return False
 
@@ -71,13 +72,13 @@ class User:
                       (self.user_id,
                        cur_muscle.get_name(),
                        cur_muscle.get_points(),
-                       cur_muscle.get_date(),
+                       cur_muscle.get_workout_date(),
                        cur_muscle.get_rest_time()))
         conn.commit()
         conn.close()
 
     def print_val(self):
         for cur_muscle in self.muscles:
-            print(f'muscle name: {cur_muscle.get_name()}\n\t point: {cur_muscle.get_points()}, recent trained at: {cur_muscle.get_date()}, restin time left: {cur_muscle.get_rest_time()}')
+            print(f'muscle name: {cur_muscle.get_name()}\n\t point: {cur_muscle.get_points()}, recent trained at: {cur_muscle.get_workout_date()}, restin time left: {cur_muscle.get_rest_time()}')
 
 

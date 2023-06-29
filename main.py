@@ -2,7 +2,8 @@ from users import User
 import data_base
 import muscle
 from gym_manager import GymManager
-
+from exercises import Exercise
+from datetime import date
 
 def main():
     # delete all data
@@ -22,8 +23,10 @@ def main():
     user_list = gym_manager.get_user_list()
 
     # update user
-    user_list[0].update_muscle("chest", 10, 2020, 10)
-    user_list[0].update_muscle("back", 20, 2021, 200)
+    user_list[0].update_muscle("chest", 10)
+    # user_list[0].update_muscle("back", 20)
+
+
 
 
 

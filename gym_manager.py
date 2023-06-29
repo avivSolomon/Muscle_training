@@ -1,6 +1,6 @@
 import sqlite3
-from muscle import Muscle
 from users import User
+from datetime import datetime
 
 
 class GymManager:
@@ -46,6 +46,7 @@ class GymManager:
             self.users.append(new_user)
         # load muscles
         c.execute("SELECT * FROM muscles")
+        date_format = "%Y-%m-%d"
         for row in c.fetchall():
             cur_user = self.get_user(row[0])
             if cur_user is None:
@@ -53,7 +54,7 @@ class GymManager:
             cur_muscle = cur_user.get_muscle(row[1])
             if cur_muscle is None:
                 continue
-            cur_muscle.update_points(row[2], row[3], row[4])
+            cur_muscle.update_points(row[2], datetime.strptime(row[3], date_format))
         conn.close()
 
     def save_data(self):
@@ -70,7 +71,7 @@ class GymManager:
                           (cur_user.get_id(),
                            cur_muscle.get_name(),
                            cur_muscle.get_points(),
-                           cur_muscle.get_date(),
+                           cur_muscle.get_workout_date(),
                            cur_muscle.get_rest_time()))
         conn.commit()
         conn.close()
