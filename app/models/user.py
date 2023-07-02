@@ -5,9 +5,9 @@ from datetime import date
 from app.models.exercise import Exercise
 
 class User:
-    def __init__(self, name, email, password, height, weight, muscles, program):
+    def __init__(self, user_id, name, email, password, height, weight, muscles=None, program=None):
         # Login Information
-        self.id = self.get_new_user_id()
+        self.id = user_id
         self.name = name
         self.email = email
         self.password = password
@@ -31,13 +31,6 @@ class User:
                "muscles: " + str(self.muscles) + "\n" + \
                "program: " + str(self.program)
 
-    def get_new_user_id(self):
-        conn = sqlite3.connect('data.db')
-        cur = conn.cursor()
-        cur.execute("SELECT MAX(user_id) FROM users")
-        max_id = cur.fetchone()[0]
-        conn.close()
-        return max_id + 1 if max_id is not None else 1
 
     def get_name(self):
         return self.name
@@ -59,6 +52,17 @@ class User:
     def set_password(self, password):
         self.password = password
         self.save_user_data()
+
+    @staticmethod
+    def get_user_by_email(email):
+        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\data.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+        user = cursor.fetchone()
+        if user is None:
+            return None
+        else:
+            return [user[0], user[1], user[2], user[3], user[4], user[5]]
 
     def get_id(self):
         return self.id
@@ -159,4 +163,13 @@ class User:
     def print_val(self):
         for cur_muscle in self.muscles:
             print(cur_muscle)
+
+if __name__ == '__main__':
+    # check connection to database
+    conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+    c = conn.cursor()
+    c.execute("""SELECT * FROM users""")
+    print(c.fetchall())
+    conn.close()
+
 

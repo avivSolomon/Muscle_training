@@ -6,6 +6,7 @@ import sqlite3
 from datetime import datetime
 import sqlite3
 
+
 class UserController:
     muscle_list = ['cardiopulmonary_endurance', 'chest', 'back',
                    'shoulders', 'biceps', 'triceps', 'quadriceps',
@@ -14,60 +15,42 @@ class UserController:
     def __init__(self):
         # self.load_data()
         self.current_user = None
+        self.current_user_details = None
 
     def is_valid_email(self, email):
         # Implement email validation logic
         return "@" in email
 
-    def create_user(self, name, email, password, height, weight):
-        # Create a new User instance
-        user_id = ...
-        # new_user_id = len(self.users)
-        muscles = [Muscle(name) for name in self.muscle_list]
-        program = None
-
-        new_user = User(user_id, name, email, password, height, weight, muscles, program)
-        new_user.save_user_data()
-
-    def save_user(self, user):
-        # Store user details in the database
-        # Implement the database storage logic here
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
-        c = conn.cursor()
-        c.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", (user.get_name(), user.get_email(), user.get_password()))
-        conn.commit()
+    def get_new_user_id(self):
+        conn = sqlite3.connect('data.db')
+        cur = conn.cursor()
+        cur.execute("SELECT MAX(user_id) FROM users")
+        max_id = cur.fetchone()[0]
         conn.close()
+        return max_id + 1 if max_id is not None else 1
 
-    # def save_data(self):
-    #     """update data.db from self.users"""
-    #     conn = sqlite3.connect('data.db')
-    #     c = conn.cursor()
-    #     c.execute("DELETE FROM users")
-    #     c.execute("DELETE FROM muscles")
-    #     for cur_user in self.users:
-    #         c.execute("INSERT INTO users VALUES (?, ?, ?, ?)",
-    #                   (cur_user.get_id(), cur_user.get_name(), cur_user.get_height(), cur_user.get_weight()))
-    #         for cur_muscle in cur_user.get_muscle_list():
-    #             c.execute("INSERT INTO muscles VALUES (?, ?, ?, ?, ?)",
-    #                       (cur_user.get_id(),
-    #                        cur_muscle.get_name(),
-    #                        cur_muscle.get_points(),
-    #                        cur_muscle.get_workout_date(),
-    #                        cur_muscle.get_rest_time()))
-    #     conn.commit()
-    #     conn.close()
+    def create_user(self, name, email, password, height, weight):
+        user_id = self.get_new_user_id()
+        muscles = [Muscle(user_id, name) for name in self.muscle_list]
+        program = None
+        new_user = User(name, email, password, height, weight, muscles, program)
+        new_user.save_user_data()
 
     def authenticate_user(self, email, password):
         # Authenticate user against stored credentials
         # Implement the authentication logic here
-        self.current_user = ...
+        self.current_user_details = User.get_user_by_email(email)
+        if self.current_user_details is None:
+            return False
+        if self.current_user_details[3] != password:
+            return False
+        self.load_user()
         return True
 
-    # def get_user(self, user_id):
-    #     for cur_user in self.users:
-    #         if cur_user.get_id() == user_id:
-    #             return cur_user
-    #     return None
+    def load_user(self):
+        self.current_user = User(self.current_user_details[0], self.current_user_details[1],
+                                 self.current_user_details[2], self.current_user_details[3],
+                                 self.current_user_details[4], self.current_user_details[5])
 
     def get_current_user(self):
         return self.current_user
@@ -79,43 +62,5 @@ class UserController:
         user.set_name(new_name) if new_name is not None else user.get_name()
         user.set_email(new_email) if new_email is not None else user.get_email()
         user.set_password(new_password) if new_password is not None else user.get_password()
-
-    # def update_user(self, user_id, user_name, height, weight):
-    #     cur_user = self.get_user(user_id)
-    #     if cur_user is None:
-    #         return False
-    #     cur_user.update_name(user_name)
-    #     cur_user.update_height(height)
-    #     cur_user.update_weight(weight)
-    #     # update data.db
-    #     cur_user.save_data()
-    #     return True
-
-
-    def get_user_list(self):
-        return self.users
-
-    def load_data(self):
-        """load data from data.db and save it to self.users"""
-        self.users = []
-        conn = sqlite3.connect('data.db')
-        c = conn.cursor()
-        # load users
-        c.execute("SELECT * FROM users")
-        for row in c.fetchall():
-            new_user = User(row[0], row[1], row[2], row[3])
-            self.users.append(new_user)
-        # load muscles
-        c.execute("SELECT * FROM muscles")
-        date_format = "%Y-%m-%d"
-        for row in c.fetchall():
-            cur_user = self.get_user(row[0])
-            if cur_user is None:
-                continue
-            cur_muscle = cur_user.get_muscle(row[1])
-            if cur_muscle is None:
-                continue
-            cur_muscle.update_points(row[2], datetime.strptime(row[3], date_format).date())
-        conn.close()
 
 

@@ -15,14 +15,13 @@ class UserView:
                 break
         password = input("Enter your password: ")
 
-        if ...:
-            ...
+        if self.user_controller.get_user_by_email(email) is not None:
+            print("User already exists.")
         else:
-            # Create a new User instance
-            new_user = self.user_controller.create_user(name, email, password)
-            # Store user details in the database
-            self.user_controller.save_user(new_user)
-            print("User registered successfully.")
+            height = int(input("Enter your height in cm: "))
+            weight = int(input("Enter your weight in kg: "))
+            self.user_controller.create_user(name, email, password, height, weight)
+            print("User created successfully.")
 
     def login_user(self):
         email = input("Enter your email: ")
@@ -38,6 +37,20 @@ class UserView:
     def user_dashboard(self):
         print("Welcome to your dashboard!")
         # Additional options and functionalities for the user's dashboard can be implemented here
+        while True:
+            print("1. Manage Profile")
+            print("2. Manage Training Program")
+            print("3. Logout")
+
+            choice = input("Enter your choice: ")
+            if choice == "1":
+                self.manage_profile()
+            elif choice == "2":
+                self.manage_training_program()
+            elif choice == "3":
+                break
+            else:
+                print("Invalid choice. Please try again.")
 
     def manage_profile(self):
         # Display the user's profile information

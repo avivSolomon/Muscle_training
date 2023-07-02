@@ -1,7 +1,7 @@
 
 
 from app.models.training_program import TrainingProgram
-from app.models.exercises import Exercise
+from app.models.exercise import Exercise
 
 
 class TrainingProgramController:

@@ -15,7 +15,6 @@ def create_tables():
             password TEXT,
             height INTEGER,
             weight INTEGER,
-            bmi REAL
         )
     ''')
 
