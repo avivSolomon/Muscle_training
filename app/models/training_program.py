@@ -4,8 +4,8 @@ import sqlite3
 
 class TrainingProgram:
 
-    def __init__(self, user_id, name, day_of_training, duration, exercises):
-        self.id = self.get_new_program_id()
+    def __init__(self, program_id, user_id, name, day_of_training, duration, exercises):
+        self.id = program_id
         self.user_id = user_id
         self.day_of_training = day_of_training
         self.name = name
@@ -13,13 +13,7 @@ class TrainingProgram:
         self.exercises = exercises
         self.save_program_data()
 
-    def get_new_program_id(self):
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
-        c = conn.cursor()
-        c.execute("SELECT MAX(id) FROM TrainingProgram")
-        max_id = c.fetchone()[0]
-        conn.close()
-        return max_id + 1 if max_id is not None else 1
+
 
     def get_name(self):
         return self.name

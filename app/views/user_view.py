@@ -1,5 +1,6 @@
 from app.controller.user_controller import UserController
 
+
 class UserView:
     def __init__(self):
         self.user_controller = UserController()
@@ -58,6 +59,10 @@ class UserView:
         print("Profile Information:")
         print(f"Name: {current_user.get_name()}")
         print(f"Email: {current_user.get_email()}")
+        print(f"Height: {current_user.get_height()}")
+        print(f"Weight: {current_user.get_weight()}")
+        print(f"BMI: {current_user.get_bmi()}")
+
 
         # # Allow the user to update their profile details (name, email, password)
         # choice = input("Do you want to update your profile? (yes/no): ")

@@ -1,6 +1,6 @@
 from app.models.user import User
 from app.models.muscle import Muscle
-from app.controller.training_program_controller import TrainingProgramController
+# from app.controller.training_program_controller import TrainingProgramController
 
 import sqlite3
 from datetime import datetime
@@ -21,25 +21,37 @@ class UserController:
         # Implement email validation logic
         return "@" in email
 
-    def get_new_user_id(self):
-        conn = sqlite3.connect('data.db')
+    @staticmethod
+    def get_new_user_id():
+        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
         cur = conn.cursor()
-        cur.execute("SELECT MAX(user_id) FROM users")
+        cur.execute("SELECT MAX(id) FROM Users")
         max_id = cur.fetchone()[0]
         conn.close()
         return max_id + 1 if max_id is not None else 1
 
     def create_user(self, name, email, password, height, weight):
         user_id = self.get_new_user_id()
-        muscles = [Muscle(user_id, name) for name in self.muscle_list]
+        muscles = [Muscle(user_id, name) for name in Muscle.muscle_list]
         program = None
-        new_user = User(name, email, password, height, weight, muscles, program)
-        new_user.save_user_data()
+        new_user = User(user_id, name, email, password, height, weight, muscles, program)
+        new_user.save_new_user_data()
+
+    @staticmethod
+    def get_user_by_email(email):
+        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM Users WHERE email = ?", (email,))
+        user = cursor.fetchone()
+        if user is None:
+            return None
+        else:
+            return [user[0], user[1], user[2], user[3], user[4], user[5]]
 
     def authenticate_user(self, email, password):
         # Authenticate user against stored credentials
         # Implement the authentication logic here
-        self.current_user_details = User.get_user_by_email(email)
+        self.current_user_details = self.get_user_by_email(email)
         if self.current_user_details is None:
             return False
         if self.current_user_details[3] != password:

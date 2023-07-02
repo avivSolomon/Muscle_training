@@ -3,6 +3,9 @@ import sqlite3
 
 
 class Muscle:
+    muscle_list = ['cardiopulmonary_endurance', 'chest', 'back',
+                   'shoulders', 'biceps', 'triceps', 'quadriceps',
+                   'hamstrings', 'calves', 'abdominal']
 
     def __init__(self, user_id, name, points=0, workout_date=date(1970, 1, 1),
                  rest_time=date(1970, 1, 1)):
@@ -61,7 +64,7 @@ class Muscle:
     def save_muscle_data(self):
         conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
         c = conn.cursor()
-        c.execute("UPDATE muscles SET points=?, workout_date=?, rest_time=? WHERE muscle_name=?",
+        c.execute("UPDATE Muscle SET points=?, workout_date=?, rest_time=? WHERE name=?",
                   (self.points, self.workout_date, self.rest_time, self.name))
         conn.commit()
         conn.close()

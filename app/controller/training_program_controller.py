@@ -1,5 +1,4 @@
-
-
+import sqlite3
 from app.models.training_program import TrainingProgram
 from app.models.exercise import Exercise
 
@@ -20,25 +19,37 @@ class TrainingProgramController:
     def __init__(self):
         self.cur_program = None
 
-    def create_program(self, name='new_program', duration=60, exercises: list[str] = None):
+    def create_program(self, user_id, name='new_program', duration=60, exercises: list[str] = None):
+        program_id = self.get_new_program_id()
+        day_of_training = 1
         if exercises is None:
-            init_exercises = [Exercise(name) for name in self.exercises_list]
+            init_exercises = [Exercise(program_id, day_of_training, name) for name in self.exercises_list]
         else:
-            init_exercises = [Exercise(name) for name in exercises]
-        return TrainingProgram(name, duration, init_exercises)
+            init_exercises = [Exercise(program_id, day_of_training, name) for name in exercises]
 
-    standard_program_list = [create_program(name=key, exercises=val) for key, val in
-                             exercises_dict.items()]
+        return TrainingProgram(program_id, user_id, name, day_of_training, duration, init_exercises)
 
-    def create_exercise(self, name, sets, repetitions, intensity, muscle):
-        exe = Exercise(name, sets, repetitions, intensity)
-        self.exercises_dict[muscle].append(exe)
+    # standard_program_list = [create_program(user_id=? ,name=key, exercises=val) for key, val in
+    #                          exercises_dict.items()]
+
+    # def create_exercise(self, name, sets, repetitions, intensity, muscle):
+    #     exe = Exercise(name, sets, repetitions, intensity)
+    #     self.exercises_dict[muscle].append(exe)
 
     def get_exercise_by_name(self, name):
         for exercise in self.cur_program:
             if exercise.get_name() == name:
                 return exercise
         return None
+
+    @staticmethod
+    def get_new_program_id():
+        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        c = conn.cursor()
+        c.execute("SELECT MAX(id) FROM TrainingProgram")
+        max_id = c.fetchone()[0]
+        conn.close()
+        return max_id + 1 if max_id is not None else 1
 
 # Additional code for training program controller functionality
 
