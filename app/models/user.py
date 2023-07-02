@@ -3,14 +3,16 @@ from datetime import date
 
 class User:
     def __init__(self, user_id, name, email, password, height, weight, muscles, program):
+        # Login Information
         self.user_id = user_id
         self.name = name
         self.email = email
         self.password = password
-
+        # bmi Information
         self.height = height
         self.weight = weight
         self.bmi = self.weight / ((self.height / 100) ** 2)
+        # muscle and program information
         self.muscles = muscles
         self.program = program
 
@@ -19,7 +21,7 @@ class User:
 
     def set_name(self, name):
         self.name = name
-        self.save_data()
+        # self.save_data()
 
     def get_email(self):
         return self.email
@@ -33,17 +35,6 @@ class User:
     def set_password(self, password):
         self.password = password
 
-
-#############################        old structure     ###################################
-
-    def __str__(self):
-        return "user_id: " + str(self.user_id) + "\n" + \
-               "user_name: " + self.name + "\n" + \
-               "height: " + str(self.height) + "\n" + \
-               "weight: " + str(self.weight) + "\n" + \
-                "bmi: " + str(self.bmi) + "\n" + \
-               "muscles: " + str(self.muscles)
-
     def get_id(self):
         return self.user_id
 
@@ -55,6 +46,14 @@ class User:
 
     def get_bmi(self):
         return self.bmi
+
+    def set_height(self, height):
+        self.height = height
+        # self.save_data()
+
+    def set_weight(self, weight):
+        self.weight = weight
+        # self.save_data()
 
     def get_muscle(self, muscle_name):
         for cur_muscle in self.muscles:
@@ -74,13 +73,18 @@ class User:
                 return True
         return False
 
-    def update_height(self, height):
-        self.height = height
-        self.save_data()
+    def get_program(self):
+        return self.program
 
-    def update_weight(self, weight):
-        self.weight = weight
-        self.save_data()
+    def set_program(self, program=None):
+        if program is None:
+            program =  if self.bmi > 30 else ...
+        self.program = program
+
+
+    def workout(self, exercise):
+        pass
+
 
     def save_data(self):
         conn = sqlite3.connect('data.db')
@@ -99,21 +103,15 @@ class User:
         conn.commit()
         conn.close()
 
+    def __str__(self):
+        return "user_id: " + str(self.user_id) + "\n" + \
+               "user_name: " + self.name + "\n" + \
+               "height: " + str(self.height) + "\n" + \
+               "weight: " + str(self.weight) + "\n" + \
+                "bmi: " + str(self.bmi) + "\n" + \
+               "muscles: " + str(self.muscles)
+
     def print_val(self):
         for cur_muscle in self.muscles:
             print(cur_muscle)
-
-
-##########################################
-
-    def get_program(self):
-        pass
-
-    def set_program(self, program=None):
-        if program is None:
-            program = ... if self.bmi > ... else ...
-        self.program = program
-
-    def workout(self, exercise):
-        pass
 

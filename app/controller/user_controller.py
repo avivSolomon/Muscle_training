@@ -24,7 +24,7 @@ class UserController:
         user_id = ...
         # new_user_id = len(self.users)
         muscles = [Muscle(name) for name in self.muscle_list]
-        program = TrainingProgramController.get_program_list()[-1]
+        program = ...
 
         new_user = User(user_id, name, email, password, height, weight, muscles, program)
         self.users.append(new_user)
