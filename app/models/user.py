@@ -1,12 +1,13 @@
 from app.controller.training_program_controller import TrainingProgramController
-
+from app.models.muscle import Muscle
 import sqlite3
 from datetime import date
+from app.models.exercise import Exercise
 
 class User:
-    def __init__(self, user_id, name, email, password, height, weight, muscles, program):
+    def __init__(self, name, email, password, height, weight, muscles, program):
         # Login Information
-        self.user_id = user_id
+        self.id = self.get_new_user_id()
         self.name = name
         self.email = email
         self.password = password
@@ -17,28 +18,50 @@ class User:
         # muscle and program information
         self.muscles = muscles
         self.program = program
+        self.program_day = 0
+        # save user
+        self.save_user_data()
+
+    def __str__(self):
+        return "user_id: " + str(self.id) + "\n" + \
+               "user_name: " + self.name + "\n" + \
+               "height: " + str(self.height) + "\n" + \
+               "weight: " + str(self.weight) + "\n" + \
+               "bmi: " + str(self.bmi) + "\n" + \
+               "muscles: " + str(self.muscles) + "\n" + \
+               "program: " + str(self.program)
+
+    def get_new_user_id(self):
+        conn = sqlite3.connect('data.db')
+        cur = conn.cursor()
+        cur.execute("SELECT MAX(user_id) FROM users")
+        max_id = cur.fetchone()[0]
+        conn.close()
+        return max_id + 1 if max_id is not None else 1
 
     def get_name(self):
         return self.name
 
     def set_name(self, name):
         self.name = name
-        # self.save_data()
+        self.save_user_data()
 
     def get_email(self):
         return self.email
 
     def set_email(self, email):
         self.email = email
+        self.save_user_data()
 
     def get_password(self):
         return self.password
 
     def set_password(self, password):
         self.password = password
+        self.save_user_data()
 
     def get_id(self):
-        return self.user_id
+        return self.id
 
     def get_height(self):
         return self.height
@@ -51,11 +74,11 @@ class User:
 
     def set_height(self, height):
         self.height = height
-        # self.save_data()
+        self.save_user_data()
 
     def set_weight(self, weight):
         self.weight = weight
-        # self.save_data()
+        self.save_user_data()
 
     def get_muscle(self, muscle_name):
         for cur_muscle in self.muscles:
@@ -70,8 +93,6 @@ class User:
         for cur_muscle in self.muscles:
             if cur_muscle.get_name() == muscle_name:
                 cur_muscle.update_points(points, workout_date)
-                # update data.db
-                self.save_data()
                 return True
         return False
 
@@ -84,53 +105,56 @@ class User:
                 if self.bmi > 30 else ...
         self.program = program
 
-    def update_exe_ditells(self, exe):
-        changes = input('enter the number of reps, sets, and intensity in this order, Separate by ","').split(",")
-        reps, sets, intensity = [int(num) for num in changes]
-        exe.set_reps(reps).set_sets(sets).set_intensity(intensity)
-        return exe
+
 
     def workout(self):
-        daily_workout = self.program.pop(0)
-        print(daily_workout)
-        change_list = list(input(""" If there are exercises that did not perform as planned, 
-                            \nwrite down the names of the exercises here 
-                            \nSeparate with the help of "," between drill and drill if there are:""").split(","))
-
-        for exe in daily_workout:
-            exe_name = exe.get_name()
-            if exe_name in change_list:
-                exe = self.update_exe_ditells(exe)
-            points = exe.get_value_points()
-            for muscle in self.muscles:
-                if exe_name in TrainingProgramController.exercises_dict[muscle.get_name()]:
-                    muscle.update_points(points)
-
-
-    def save_data(self):
-        conn = sqlite3.connect('data.db')
+        # get exercise_id, name, points from exercise table for each exercise in daily_workout
+        # update points for each muscle in muscles table
+        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
         c = conn.cursor()
-        c.execute("DELETE FROM users WHERE user_id=?", (self.user_id,))
-        c.execute("DELETE FROM muscles WHERE user_id=?", (self.user_id,))
-        c.execute("INSERT INTO users VALUES (?, ?, ?, ?)",
-                  (self.user_id, self.name, self.height, self.weight))
-        for cur_muscle in self.muscles:
-            c.execute("INSERT INTO muscles VALUES (?, ?, ?, ?, ?)",
-                      (self.user_id,
-                       cur_muscle.get_name(),
-                       cur_muscle.get_points(),
-                       cur_muscle.get_workout_date(),
-                       cur_muscle.get_rest_time()))
-        conn.commit()
+        # get the day of the program
+        c.execute("""SELECT day_of_training FROM TrainingProgram WHERE user_id = ?""",
+                  (self.id,))
+        self.program_day = c.fetchone()[0]
+        c.execute("""SELECT Exercise.id, Exercise.value_points, Exercise.name
+                    FROM Exercise
+                    INNER JOIN DailyTrainingProgram ON Exercise.id = DailyTrainingProgram.exercise_id
+                    INNER JOIN TrainingProgram ON DailyTrainingProgram.training_program_id = TrainingProgram.id
+                    WHERE TrainingProgram.user_id = ? AND DailyTrainingProgram.day = ?""",
+                  (self.id, self.program_day))
+        daily_workout = c.fetchall()
+        for exercise in daily_workout:
+            print(exercise[2], end=', ')
+        change_list = list(input(""" If there are exercises that did not perform as planned, 
+                                    \nwrite down the names of the exercises here 
+                                    \nSeparate with the help of "," between drill and drill if there are:""").split(","))
+        user_muscles = Muscle.get_muscles_by_user_id(self.id)
+        for exercise in daily_workout:
+            if exercise[2] in change_list:
+                Exercise.update_exe_details(exercise[0])
+            exe_id, points, exe_name = exercise
+            for muscle in user_muscles:
+                if exe_name in TrainingProgramController.exercises_dict[muscle[1]]:
+                    muscle_id = muscle[0]
+                    update_points = muscle[2] + points
+                    workout_date = date.today()
+                    rest_date = Muscle.calculate_rest_time(points)
+                    c.execute("""UPDATE Muscle SET points = ?, workout_date = ?, rest_date = ?
+                                WHERE id = ?""",
+                                (update_points, workout_date, rest_date, muscle_id))
+                    c.execute("""INSERT INTO ExerciseHistory (user_id, exercise_id, workout_date)
+                                VALUES (?, ?, ?)""",
+                                (self.id, exe_id, workout_date))
+                    conn.commit()
         conn.close()
 
-    def __str__(self):
-        return "user_id: " + str(self.user_id) + "\n" + \
-               "user_name: " + self.name + "\n" + \
-               "height: " + str(self.height) + "\n" + \
-               "weight: " + str(self.weight) + "\n" + \
-                "bmi: " + str(self.bmi) + "\n" + \
-               "muscles: " + str(self.muscles)
+    def save_user_data(self):
+        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        c = conn.cursor()
+        c.execute("""UPDATE users SET name = ?, email = ?, password = ?, height = ?,
+         weight = ?, bmi = ? WHERE user_id = ?""",
+                  (self.name, self.email, self.password, self.height, self.weight, self.bmi, self.user_id))
+        conn.commit()
 
     def print_val(self):
         for cur_muscle in self.muscles:

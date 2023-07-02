@@ -1,4 +1,5 @@
 from app.controller.training_program_controller import TrainingProgramController
+import sqlite3
 
 class TrainingProgramView:
     def __init__(self):
@@ -51,16 +52,34 @@ class TrainingProgramView:
 # Additional code for user interface related to training program management
 
 if __name__ == "__main__":
-    training_program_view = TrainingProgramView()
+    conn = sqlite3.connect(r"C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db")
+    # c = conn.cursor()
+    # c.execute("schema")
 
-    while True:
-        print("\n1. Create Training Program")
-        print("2. Exit")
 
-        choice = input("Enter your choice: ")
-        if choice == "1":
-            training_program_view.manage_training_program()
-        elif choice == "2":
-            break
-        else:
-            print("Invalid choice. Please try again.")
+    # Create a cursor object to interact with the database
+    cursor = conn.cursor()
+
+    # Query the sqlite_master table to get the schema information
+    cursor.execute("SELECT name, sql FROM sqlite_master WHERE type='table'")
+
+    # Fetch all the table information
+    tables = cursor.fetchall()
+
+    # Print the schema for each table
+    for table in tables:
+        table_name = table[0]
+        table_schema = table[1]
+        print("Table Name:", table_name)
+        print("Table Schema:", table_schema)
+        print("\n")
+
+    # Close the cursor and the database connection
+    cursor.close()
+    conn.close()
+
+    # c.execute("SELECT * FROM exercise")
+    # print(c.fetchall())
+
+
+

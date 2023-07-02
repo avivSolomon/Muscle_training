@@ -4,12 +4,14 @@ import sqlite3
 
 class Muscle:
 
-    def __init__(self, name, points=0, workout_date=date(1970,1,1),
-                 rest_time=date(1970,1,1)):
+    def __init__(self, user_id, name, points=0, workout_date=date(1970, 1, 1),
+                 rest_time=date(1970, 1, 1)):
+        self.user_id = user_id
         self.name = name
         self.points = points
         self.workout_date = workout_date
         self.rest_time = rest_time
+        self.save_muscle_data()
 
     def __str__(self):
         return "name: " + self.name + "\n" + \
@@ -20,6 +22,15 @@ class Muscle:
     def get_name(self):
         return self.name
 
+    @staticmethod
+    def get_muscles_by_user_id(user_id):
+        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        c = conn.cursor()
+        c.execute("SELECT * FROM Muscle WHERE user_id=?", (user_id,))
+        muscles = c.fetchall()
+        conn.close()
+        return muscles
+
     def get_points(self):
         return self.points
 
@@ -28,6 +39,11 @@ class Muscle:
 
     def get_rest_time(self):
         return self.rest_time
+
+    @staticmethod
+    def calculate_rest_time(points):
+        day_rest = 0 if points < 2 else 1 if points < 3 else 2
+        return date.today() + timedelta(days=day_rest)
 
     def update_points(self, points, workout_date=date.today()):
         self.points = points
@@ -43,7 +59,7 @@ class Muscle:
         return [self.points, self.workout_date, self.rest_time]
 
     def save_muscle_data(self):
-        conn = sqlite3.connect('data.db')
+        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
         c = conn.cursor()
         c.execute("UPDATE muscles SET points=?, workout_date=?, rest_time=? WHERE muscle_name=?",
                   (self.points, self.workout_date, self.rest_time, self.name))

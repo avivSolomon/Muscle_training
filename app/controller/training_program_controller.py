@@ -1,4 +1,4 @@
-from poetry.console.commands import self
+
 
 from app.models.training_program import TrainingProgram
 from app.models.exercises import Exercise
@@ -20,7 +20,7 @@ class TrainingProgramController:
     def __init__(self):
         self.cur_program = None
 
-    def create_program(self, name='new_user', duration=60, exercises: list[str] = None):
+    def create_program(self, name='new_program', duration=60, exercises: list[str] = None):
         if exercises is None:
             init_exercises = [Exercise(name) for name in self.exercises_list]
         else:

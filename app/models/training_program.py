@@ -1,12 +1,25 @@
-from app.models.exercises import Exercise
+from app.models.exercise import Exercise
+import sqlite3
 
 
 class TrainingProgram:
 
-    def __init__(self, name, duration, exercises):
+    def __init__(self, user_id, name, day_of_training, duration, exercises):
+        self.id = self.get_new_program_id()
+        self.user_id = user_id
+        self.day_of_training = day_of_training
         self.name = name
         self.duration = duration
         self.exercises = exercises
+        self.save_program_data()
+
+    def get_new_program_id(self):
+        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        c = conn.cursor()
+        c.execute("SELECT MAX(id) FROM TrainingProgram")
+        max_id = c.fetchone()[0]
+        conn.close()
+        return max_id + 1 if max_id is not None else 1
 
     def get_name(self):
         return self.name
@@ -30,8 +43,8 @@ class TrainingProgram:
                 return cur_exercise
         return None
 
-    def clear_exercises(self):
-        self.exercises = []
+    # def clear_exercises(self):
+    #     self.exercises = []
 
     def get_program_details(self):
         program_details = f"Training Program: {self.name}\n"
@@ -43,5 +56,13 @@ class TrainingProgram:
 
         return program_details
 
+    def save_program_data(self):
+        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        c = conn.cursor()
+        c.execute("INSERT INTO training_program (user_id, name, day_of_training, duration) VALUES (?, ?, ?, ?)",
+                  (self.user_id, self.name, self.day_of_training, self.duration))
+        conn.commit()
+        conn.close()
 
-# Additional code for training program-related functionality
+
+

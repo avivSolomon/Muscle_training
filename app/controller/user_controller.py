@@ -4,7 +4,7 @@ from app.controller.training_program_controller import TrainingProgramController
 
 import sqlite3
 from datetime import datetime
-
+import sqlite3
 
 class UserController:
     muscle_list = ['cardiopulmonary_endurance', 'chest', 'back',
@@ -27,14 +27,16 @@ class UserController:
         program = None
 
         new_user = User(user_id, name, email, password, height, weight, muscles, program)
-        self.users.append(new_user)
-        # update data.db
-        self.save_user(new_user)
+        new_user.save_user_data()
 
     def save_user(self, user):
         # Store user details in the database
         # Implement the database storage logic here
-        pass
+        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        c = conn.cursor()
+        c.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", (user.get_name(), user.get_email(), user.get_password()))
+        conn.commit()
+        conn.close()
 
     # def save_data(self):
     #     """update data.db from self.users"""
