@@ -9,7 +9,7 @@ class Exercise:
         self.sets = sets
         self.reps = reps
         self.intensity = intensity
-        self.Value_points = round(sets * intensity * reps / 50)
+        self.value_points = round(sets * intensity * reps / 50)
         self.workout_date = date.today()
 
     def get_name(self):
@@ -32,6 +32,9 @@ class Exercise:
 
     def set_reps(self, reps):
         self.reps = reps
+
+    def get_value_points(self):
+        return self.value_points
 
 
 # Additional code for exercise-related functionality

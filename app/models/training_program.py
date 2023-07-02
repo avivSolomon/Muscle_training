@@ -1,4 +1,6 @@
 from app.models.exercises import Exercise
+
+
 class TrainingProgram:
 
     def __init__(self, name, duration, exercises):
@@ -12,8 +14,8 @@ class TrainingProgram:
     def get_duration(self):
         return self.duration
 
-    def add_exercise(self, name, intensity:int, workout_date, sets=3, repetitions=10):
-        self.exercises.append(Exercise(name, intensity, workout_date, sets))
+    def add_exercise(self, name, intensity:int, sets=3, reps=10):
+        self.exercises.append(Exercise(name, intensity, sets, reps))
 
     def remove_exercise(self, exercise):
         if exercise in self.exercises:

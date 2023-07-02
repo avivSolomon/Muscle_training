@@ -4,7 +4,6 @@ from app.models.training_program import TrainingProgram
 from app.models.exercises import Exercise
 
 
-
 class TrainingProgramController:
     exercises_dict = {'Quadriceps': ['squats', 'lunges', 'leg_press'],
                       'hamstring': ['deadlifts', 'hamstring_curls'],
@@ -31,17 +30,9 @@ class TrainingProgramController:
     standard_program_list = [create_program(name=key, exercises=val) for key, val in
                              exercises_dict.items()]
 
-    standard_program =
-
-    def add_exercise_to_program(self, program, exercise):
-        pass
-
     def create_exercise(self, name, sets, repetitions, intensity, muscle):
         exe = Exercise(name, sets, repetitions, intensity)
         self.exercises_dict[muscle].append(exe)
-
-    def get_standard_program(self):
-        return
 
     def get_exercise_by_name(self, name):
         for exercise in self.cur_program:
@@ -50,6 +41,7 @@ class TrainingProgramController:
         return None
 
 # Additional code for training program controller functionality
+
 
 if __name__ == "__main__":
     training_program_controller = TrainingProgramController()

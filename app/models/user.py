@@ -1,3 +1,5 @@
+from app.controller.training_program_controller import TrainingProgramController
+
 import sqlite3
 from datetime import date
 
@@ -78,12 +80,31 @@ class User:
 
     def set_program(self, program=None):
         if program is None:
-            program =  if self.bmi > 30 else ...
+            program = TrainingProgramController.standard_program_list[-1]\
+                if self.bmi > 30 else ...
         self.program = program
 
+    def update_exe_ditells(self, exe):
+        changes = input('enter the number of reps, sets, and intensity in this order, Separate by ","').split(",")
+        reps, sets, intensity = [int(num) for num in changes]
+        exe.set_reps(reps).set_sets(sets).set_intensity(intensity)
+        return exe
 
-    def workout(self, exercise):
-        pass
+    def workout(self):
+        daily_workout = self.program.pop(0)
+        print(daily_workout)
+        change_list = list(input(""" If there are exercises that did not perform as planned, 
+                            \nwrite down the names of the exercises here 
+                            \nSeparate with the help of "," between drill and drill if there are:""").split(","))
+
+        for exe in daily_workout:
+            exe_name = exe.get_name()
+            if exe_name in change_list:
+                exe = self.update_exe_ditells(exe)
+            points = exe.get_value_points()
+            for muscle in self.muscles:
+                if exe_name in TrainingProgramController.exercises_dict[muscle.get_name()]:
+                    muscle.update_points(points)
 
 
     def save_data(self):
