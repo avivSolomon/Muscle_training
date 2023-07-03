@@ -1,6 +1,6 @@
 from app.models.user import User
 from app.models.muscle import Muscle
-# from app.controller.training_program_controller import TrainingProgramController
+from app.controller.training_program_controller import TrainingProgramController
 
 import sqlite3
 from datetime import datetime
@@ -33,9 +33,10 @@ class UserController:
     def create_user(self, name, email, password, height, weight):
         user_id = self.get_new_user_id()
         muscles = [Muscle(user_id, name) for name in Muscle.muscle_list]
-        program = None
-        new_user = User(user_id, name, email, password, height, weight, muscles, program)
+        TrainingProgramController.create_program(user_id=user_id)
+        new_user = User(user_id, name, email, password, height, weight, muscles)
         new_user.save_new_user_data()
+
 
     @staticmethod
     def get_user_by_email(email):

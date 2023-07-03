@@ -14,7 +14,7 @@ class Muscle:
         self.points = points
         self.workout_date = workout_date
         self.rest_time = rest_time
-        self.save_muscle_data()
+        self.save_new_muscle_data()
 
     def __str__(self):
         return "name: " + self.name + "\n" + \
@@ -60,7 +60,7 @@ class Muscle:
         self.workout_date = workout_date
         day_rest = 0 if points<2 else 1 if points<3 else 2
         self.rest_time = self.workout_date + timedelta(days=day_rest)
-        self.save_muscle_data()
+        self.update_muscle_data()
 
     def in_rest(self):
         return (self.rest_time - date.today()).days > 0
@@ -68,15 +68,29 @@ class Muscle:
     def get_muscle_value(self):
         return [self.points, self.workout_date, self.rest_time]
 
-    def save_muscle_data(self):
+    def save_new_muscle_data(self):
         conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
         c = conn.cursor()
-        c.execute("UPDATE Muscle SET points=?, workout_date=?, rest_time=? WHERE name=?",
-                  (self.points, self.workout_date, self.rest_time, self.name))
+        c.execute("INSERT INTO Muscle (user_id, name, points, workout_date, rest_time) VALUES (?, ?, ?, ?, ?)",
+                  (self.user_id, self.name, self.points, self.workout_date, self.rest_time))
+        conn.commit()
+        conn.close()
+
+    def update_muscle_data(self):
+        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        c = conn.cursor()
+        c.execute("UPDATE Muscle SET points=?, workout_date=?, rest_time=? WHERE user_id=? AND name=?",
+                  (self.points, self.workout_date, self.rest_time, self.user_id, self.name))
         conn.commit()
         conn.close()
 
 
-# while True:
-#     today = date.today()
-#     time.sleep(24*60*60)
+if __name__ == '__main__':
+    conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM Muscle where user_id=5")
+    print(c.fetchall())
+    conn.close()
+    # while True:
+    #     today = date.today()
+    #     time.sleep(24*60*60)

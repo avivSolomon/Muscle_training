@@ -18,8 +18,8 @@ class User:
         self.weight = weight
         self.bmi = self.weight / ((self.height / 100) ** 2)
         # muscle and program information
-        self.muscles = muscles
-        self.set_program(program)
+        # self.muscles = muscles
+        # self.set_program()
         # save user
         self.update_user_data()
 
@@ -100,8 +100,8 @@ class User:
                 return True
         return False
 
-    def set_program(self, duration=60, exercises_list=None):
-        TrainingProgramController.create_program(user_id=self.id, duration=duration, exercises=exercises_list)
+    # def set_program(user_id=duration=60, exercises_list=None):
+    #     TrainingProgramController.create_program(user_id=self.id, duration=duration, exercises=exercises_list)
 
 
     def workout(self):

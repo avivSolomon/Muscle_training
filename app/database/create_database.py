@@ -26,7 +26,7 @@ def create_tables():
             user_id INTEGER,
             name TEXT,
             day_of_training INTEGER,
-            duration_in_days INTEGER,
+            duration INTEGER,
             FOREIGN KEY (user_id) REFERENCES Users(id)
         )
     ''')
@@ -146,9 +146,9 @@ if __name__ == '__main__':
     # cursor.execute('INSERT INTO Exercise (training_program_id, day_of_training, name, intensity, sets, reps, '
     #                'value_points) VALUES (?, ?, ?, ?, ?, ?, ?)',
     #                (2, 3, 'Plank', 1, 3, 10, 1))
-    # cursor.execute('INSERT INTO TrainingProgram (user_id, name, day_of_training, duration_in_days) VALUES (?, ?, ?, ?)',
+    # cursor.execute('INSERT INTO TrainingProgram (user_id, name, day_of_training, duration) VALUES (?, ?, ?, ?)',
     #                  (1, 'Beginner', 1, 3))
-    # cursor.execute('INSERT INTO TrainingProgram (user_id, name, day_of_training, duration_in_days) VALUES (?, ?, ?, ?)',
+    # cursor.execute('INSERT INTO TrainingProgram (user_id, name, day_of_training, duration) VALUES (?, ?, ?, ?)',
     #                     (2, 'Advanced', 1, 3))
     # cursor.execute('INSERT INTO DailyTrainingProgram (training_program_id, exercise_id, day) VALUES (?, ?, ?)',
     #                (1, 1, 1))
@@ -182,7 +182,7 @@ if __name__ == '__main__':
     #                (2, 5, '2020-01-01'))
     # cursor.execute('INSERT INTO ExerciseHistory (user_id, exercise_id, workout_date) VALUES (?, ?, ?)',
     #                (2, 6, '2020-01-01'))
-    # conn.commit()
-    # conn.close()
+    conn.commit()
+    conn.close()
 
-    # show_all_data()
+    show_all_data()

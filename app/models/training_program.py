@@ -51,7 +51,7 @@ class TrainingProgram:
     def save_program_data(self):
         conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
         c = conn.cursor()
-        c.execute("INSERT INTO training_program (user_id, name, day_of_training, duration) VALUES (?, ?, ?, ?)",
+        c.execute("INSERT INTO TrainingProgram (user_id, name, day_of_training, duration) VALUES (?, ?, ?, ?)",
                   (self.user_id, self.name, self.day_of_training, self.duration))
         conn.commit()
         conn.close()
