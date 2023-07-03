@@ -5,14 +5,14 @@ from app.models.muscle import Muscle
 
 
 class TrainingProgramController:
-    exercises_dict = {'Quadriceps': ['squats', 'lunges', 'leg_press'],
+    exercises_dict = {'quadriceps': ['squats', 'lunges', 'leg_press'],
                       'hamstring': ['deadlifts', 'hamstring_curls'],
-                      'Back': ['pull_ups', 'rows', 'lat_pull_downs', 'planks'],
-                      'Biceps': ['bicep_curls', 'hammer_curls'],
-                      'Chest': ['bench_press', 'push_ups', 'chest_flies', 'dumbbell_press'],
-                      'Shoulders': ['shoulder_press', 'lateral_raises', 'front_raises'],
-                      'Triceps': ['triceps_dips', 'triceps_push_downs'],
-                      'Abdominal': ['planks', 'sit_ups', 'russian_twists'],
+                      'back': ['pull_ups', 'rows', 'lat_pull_downs', 'planks'],
+                      'biceps': ['bicep_curls', 'hammer_curls'],
+                      'chest': ['bench_press', 'push_ups', 'chest_flies', 'dumbbell_press'],
+                      'shoulders': ['shoulder_press', 'lateral_raises', 'front_raises'],
+                      'triceps': ['triceps_dips', 'triceps_push_downs'],
+                      'abdominal': ['planks', 'sit_ups', 'russian_twists'],
                       'cardiopulmonary_endurance': ['running', 'cycling', 'swimming']}
 
     exercises_list = list(exercises_dict.values())
@@ -38,12 +38,14 @@ class TrainingProgramController:
 
     @staticmethod
     def get_key_value(exe_dict, value):
+        key_list = []
         for k, v in exe_dict.items():
             if value in v:
-                return k
+                key_list.append(k)
+        return key_list
 
     @staticmethod
-    def create_program(user_id, name='new_program', duration=60,
+    def create_program(user_id, program_name='new_program', duration=60,
                        exercises: list[list[str]] = None):
         program_id = TrainingProgramController.get_new_program_id()
         intensity_dict = TrainingProgramController.intensity_level(user_id)
@@ -55,11 +57,14 @@ class TrainingProgramController:
             daily_program = []
             for name in daily_workout:
                 key = TrainingProgramController.get_key_value(TrainingProgramController.exercises_dict,name)
-                intensity = intensity_dict[key]
+                if key is not None:
+                    intensity = min([intensity_dict[k] for k in key])
+                else:
+                    intensity = 1
                 daily_program.append(Exercise(program_id, day_of_training, name, intensity=intensity))
             program.append(daily_program)
 
-        TrainingProgram(program_id, user_id, name, day_of_training=1, duration=duration)
+        TrainingProgram(program_id, user_id, program_name, day_of_training=1, duration=duration)
 
 
 
