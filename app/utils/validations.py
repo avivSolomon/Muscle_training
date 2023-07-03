@@ -1,31 +1,18 @@
-# Helpers.py
+def is_valid_name(name):
+    return len(name) > 0 and name.isalpha()
 
-def validate_email(email):
-    if "@" in email:
-        return True
-    else:
-        return False
 
-def validate_password(password):
-    if len(password) >= 6:
-        return True
-    else:
-        return False
+def is_valid_email(email):
+    # Implement email validation logic
+    return "@" in email
 
-def validate_duration(duration):
-    if duration > 0:
-        return True
-    else:
-        return False
 
-def validate_intensity(intensity):
-    if intensity >= 1 and intensity <= 10:
-        return True
-    else:
-        return False
+def is_valid_password(password):
+    # Implement password validation logic
+    return len(password) >= 6 and password.isalnum()
 
-def validate_name(name):
-    if len(name) > 0:
-        return True
-    else:
-        return False
+def is_valid_height(height):
+    return height.isdigit() and 0 < int(height) < 300
+
+def is_valid_weight(weight):
+    return weight.isdigit() and 0 < int(weight) < 300

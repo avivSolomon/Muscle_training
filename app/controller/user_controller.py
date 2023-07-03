@@ -16,9 +16,7 @@ class UserController:
         self.current_user = None
         self.current_user_details = None
 
-    def is_valid_email(self, email):
-        # Implement email validation logic
-        return "@" in email
+
 
     @staticmethod
     def get_new_user_id():
