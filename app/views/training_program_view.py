@@ -13,7 +13,8 @@ class TrainingProgramView:
             print("2. Show Training Program Details")
             print("3. Create New Training Program")
             print("4. Workout")
-            print("5. Back")
+            print("5. Show Muscles Status")
+            print("6. Back")
 
             choice = input("Enter your choice: ")
             if choice == "1":
@@ -26,6 +27,8 @@ class TrainingProgramView:
             elif choice == "4":
                 self.training_program_controller.workout()
             elif choice == "5":
+                self.display_muscles_status()
+            elif choice == "6":
                 break
 
     def display_today_exercises(self):
@@ -39,6 +42,11 @@ class TrainingProgramView:
 
     def display_user_program_details(self):
         print(self.training_program_controller.get_user_program())
+
+    def display_muscles_status(self):
+        muscle_status = self.training_program_controller.get_muscles_status()
+        for muscle in muscle_status:
+            print(f"Muscle Name: {muscle[1]}\n Muscle Points: {muscle[2]}\n Workout Date: {muscle[3]}\n Rest Time: {muscle[4]}\n")
 
     # def manage_training_program(self):
     #     program = self.create_program()

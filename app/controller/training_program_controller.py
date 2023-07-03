@@ -128,6 +128,10 @@ class TrainingProgramController:
         conn.close()
         self.user_program.set_day_of_training(self.program_day_of_training + 1)
 
+    def get_muscles_status(self):
+        muscles_status = Muscle.get_muscles_by_user_id(self.user_id)
+        return muscles_status
+
     @staticmethod
     def standard_program_list():
         """
