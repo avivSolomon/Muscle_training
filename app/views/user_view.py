@@ -1,9 +1,11 @@
 from app.controller.user_controller import UserController
+from app.views.training_program_view import TrainingProgramView
 
 
 class UserView:
     def __init__(self):
         self.user_controller = UserController()
+        self.training_program_view = None
 
     def register_user(self):
         name = input("Enter your name: ")
@@ -47,7 +49,7 @@ class UserView:
             if choice == "1":
                 self.manage_profile()
             elif choice == "2":
-                self.manage_training_program()
+                self.training_program_view = TrainingProgramView()
             elif choice == "3":
                 break
             else:
@@ -64,16 +66,27 @@ class UserView:
         print(f"BMI: {current_user.get_bmi()}")
 
 
-        # # Allow the user to update their profile details (name, email, password)
-        # choice = input("Do you want to update your profile? (yes/no): ")
-        # if choice.lower() == "yes":
-        #     new_name = input("Enter your new name (or press Enter to skip): ")
-        #     new_email = input("Enter your new email (or press Enter to skip): ")
-        #     new_password = input("Enter your new password (or press Enter to skip): ")
-        #
-        #     # Update the user's details in the database
-        #     self.user_controller.update_profile(new_name, new_email, new_password)
-        #     print("Profile updated successfully.")
+        # Allow the user to update their profile details (name, email, password)
+        choice = input("Do you want to update your profile? (yes/no): ")
+        if choice.lower() == "yes":
+            new_name = input("Enter your new name (or press Enter to skip): ")
+            while True:
+                new_email = input("Enter your new email (or press Enter to skip): ")
+                # Validate inputs
+                if new_email == "":
+                    break
+                elif not self.user_controller.is_valid_email(new_email):
+                    print("Invalid email format.")
+                else:
+                    # check if email already exists
+                    if self.user_controller.get_user_by_email(new_email) is not None:
+                        print("User already exists.")
+            new_password = input("Enter your new password (or press Enter to skip): ")
+            new_height = input("Enter your new height (or press Enter to skip): ")
+            new_weight = input("Enter your new weight (or press Enter to skip): ")
+            # Update the user's details in the database
+            self.user_controller.update_profile(new_name, new_email, new_password, new_height, new_weight)
+            print("Profile updated successfully.")
 
 
 # Additional code for user interface related to user management

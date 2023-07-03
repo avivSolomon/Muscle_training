@@ -67,12 +67,16 @@ class UserController:
     def get_current_user(self):
         return self.current_user
 
-    def update_profile(self, new_name=None, new_email=None, new_password=None):
+    def update_profile(self, new_name=None, new_email=None, new_password=None, new_height=None, new_weight=None):
         # Update the user's details in the database
         # Implement the update logic here
         user = self.get_current_user()
-        user.set_name(new_name) if new_name is not None else user.get_name()
-        user.set_email(new_email) if new_email is not None else user.get_email()
-        user.set_password(new_password) if new_password is not None else user.get_password()
+        user.set_name(new_name) if new_name != '' else user.get_name()
+        user.set_email(new_email) if new_email != '' else user.get_email()
+        user.set_password(new_password) if new_password != '' else user.get_password()
+        user.set_height(int(new_height)) if new_height != '' else user.get_height()
+        user.set_weight(int(new_weight)) if new_weight != '' else user.get_weight()
+        user.set_bmi()
+        user.update_user_data()
 
 

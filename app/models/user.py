@@ -71,6 +71,10 @@ class User:
     def get_bmi(self):
         return self.bmi
 
+    def set_bmi(self):
+        self.bmi = self.weight / ((self.height / 100) ** 2)
+        self.update_user_data()
+
     def get_muscle_by_name(self, muscle_name):
         conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
         c = conn.cursor()
@@ -106,8 +110,6 @@ class User:
             program = TrainingProgramController.standard_program_list[-1]\
                 if self.bmi > 30 else ...
         self.program = program
-
-    def
 
     def workout(self):
         # get exercise_id, name, points from exercise table for each exercise in daily_workout
