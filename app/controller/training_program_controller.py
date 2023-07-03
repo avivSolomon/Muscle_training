@@ -1,6 +1,7 @@
 import sqlite3
 from app.models.training_program import TrainingProgram
 from app.models.exercise import Exercise
+from app.models.muscle import Muscle
 
 
 class TrainingProgramController:
@@ -19,31 +20,48 @@ class TrainingProgramController:
     def __init__(self):
         self.cur_program = None
 
-    def create_program(self, user_id, name='new_program', duration=60, exercises: list[list[str]] = None):
-        program_id = self.get_new_program_id()
-        program = []
-        if exercises is None:
-            for day_of_training in range(1, duration+1):
-                daily_workout = self.standard_program_list()[day_of_training % 2]
-                program.append(
-                    [Exercise(program_id, day_of_training, name) for name in daily_workout])
-        # else:
-
-        #     init_exercises = [Exercise(program_id, day_of_training, name) for name in exercises]
-
-        TrainingProgram(program_id, user_id, name, day_of_training=1, duration=duration)
-
     @staticmethod
     def standard_program_list():
         a = ['squats', 'lunges', 'leg_press', 'deadlifts', 'hamstring_curls', 'calf_raises',
              'pull_ups', 'rows', 'lat_pulldowns', 'bicep_curls', 'hammer_curls']
-
         b = ['bench_press', 'push_ups', 'chest_flies', 'dumbbell_press', 'shoulder_press',
-             'lateral_raises','front_raises', 'triceps_dips', 'triceps_pushdowns', 'planks',
+             'lateral_raises', 'front_raises', 'triceps_dips', 'triceps_pushdowns', 'planks',
              'sit_ups', 'russian_twists']
+        return [a, b]
 
-        standard = [a,b]
-        return standard
+    @staticmethod
+    def intensity_level(user_id):
+        muscle_intensity_level_dict = Muscle.get_all_the_muscles_points(user_id)
+        for muscle in muscle_intensity_level_dict.keys():
+            muscle_intensity_level_dict[muscle] = len(str(int(muscle_intensity_level_dict[muscle])))
+        return muscle_intensity_level_dict
+
+    @staticmethod
+    def get_key_value(exe_dict, value):
+        for k, v in exe_dict.items():
+            if value in v:
+                return k
+
+    @staticmethod
+    def create_program(user_id, name='new_program', duration=60,
+                       exercises: list[list[str]] = None):
+        program_id = TrainingProgramController.get_new_program_id()
+        intensity_dict = TrainingProgramController.intensity_level(user_id)
+        program = []
+        if exercises is None:
+            exercises = TrainingProgramController.standard_program_list()
+        for day_of_training in range(1, duration+1):
+            daily_workout = exercises[day_of_training % len(exercises)]
+            daily_program = []
+            for name in daily_workout:
+                key = TrainingProgramController.get_key_value(TrainingProgramController.exercises_dict,name)
+                intensity = intensity_dict[key]
+                daily_program.append(Exercise(program_id, day_of_training, name, intensity=intensity))
+            program.append(daily_program)
+
+        TrainingProgram(program_id, user_id, name, day_of_training=1, duration=duration)
+
+
 
     # def create_exercise(self, name, sets, repetitions, intensity, muscle):
     #     exe = Exercise(name, sets, repetitions, intensity)

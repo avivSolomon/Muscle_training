@@ -17,10 +17,10 @@ class User:
         self.height = height
         self.weight = weight
         self.bmi = self.weight / ((self.height / 100) ** 2)
+        self.intensity = self.intensity_level()
         # muscle and program information
         self.muscles = muscles
-        self.program = program
-        self.program_day = 0
+        self.set_program(program)
         # save user
         self.update_user_data()
 
@@ -103,11 +103,8 @@ class User:
 
     def set_program(self, program=None):
         if program is None:
-            program = TrainingProgramController.standard_program_list[-1]\
-                if self.bmi > 30 else ...
+            program = TrainingProgramController.create_program(user_id=self.id)
         self.program = program
-
-    def
 
     def workout(self):
         # get exercise_id, name, points from exercise table for each exercise in daily_workout

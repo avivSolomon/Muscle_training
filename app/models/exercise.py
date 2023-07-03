@@ -11,7 +11,7 @@ class Exercise:
         self.sets = sets
         self.reps = reps
         self.intensity = intensity
-        self.value_points = round(sets * intensity * reps / 50)
+        self.value_points = round(sets * intensity * reps / 30)
         self.workout_date = date.today()
         self.save_exercise_data()
 

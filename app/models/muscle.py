@@ -34,6 +34,13 @@ class Muscle:
         conn.close()
         return muscles
 
+    @staticmethod
+    def get_all_the_muscles_points(user_id):
+        dict_muscle_points = {}
+        for muscle in Muscle.get_muscles_by_user_id(user_id):
+            dict_muscle_points[muscle[1]] = muscle[2]
+        return dict_muscle_points
+
     def get_points(self):
         return self.points
 
