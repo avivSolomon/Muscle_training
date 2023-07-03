@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 import sqlite3
+from app.database.create_database import DB_PATH
 
 
 class Muscle:
@@ -27,7 +28,7 @@ class Muscle:
 
     @staticmethod
     def get_muscles_by_user_id(user_id):
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("SELECT * FROM Muscle WHERE user_id=?", (user_id,))
         muscles = c.fetchall()
@@ -69,7 +70,7 @@ class Muscle:
         return [self.points, self.workout_date, self.rest_time]
 
     def save_new_muscle_data(self):
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("INSERT INTO Muscle (user_id, name, points, workout_date, rest_time) VALUES (?, ?, ?, ?, ?)",
                   (self.user_id, self.name, self.points, self.workout_date, self.rest_time))
@@ -77,7 +78,7 @@ class Muscle:
         conn.close()
 
     def update_muscle_data(self):
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("UPDATE Muscle SET points=?, workout_date=?, rest_time=? WHERE user_id=? AND name=?",
                   (self.points, self.workout_date, self.rest_time, self.user_id, self.name))
@@ -86,7 +87,7 @@ class Muscle:
 
 
 if __name__ == '__main__':
-    conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute("SELECT * FROM Muscle where user_id=1")
     print(c.fetchall())

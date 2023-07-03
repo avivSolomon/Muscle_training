@@ -1,5 +1,6 @@
 from app.models.exercise import Exercise
 import sqlite3
+from app.database.create_database import DB_PATH
 
 
 class TrainingProgram:
@@ -66,7 +67,7 @@ class TrainingProgram:
         conn.close()
 
     def save_new_program_data(self):
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("INSERT INTO TrainingProgram (user_id, name, day_of_training, duration) VALUES (?, ?, ?, ?)",
                   (self.user_id, self.name, self.day_of_training, self.duration))

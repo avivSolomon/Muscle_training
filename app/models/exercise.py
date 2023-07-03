@@ -1,5 +1,6 @@
 from datetime import date
 import sqlite3
+from app.database.create_database import DB_PATH
 
 
 class Exercise:
@@ -24,7 +25,7 @@ class Exercise:
                "workout_date: " + str(self.workout_date)
 
     def get_new_exercise_id(self):
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("SELECT MAX(id) FROM Exercise")
         max_id = c.fetchone()[0]
@@ -63,13 +64,13 @@ class Exercise:
         changes = input('enter the number of reps, sets, and intensity in this order, Separate by ","').split(",")
         reps, sets, intensity = [int(num) for num in changes]
         # update exercise details in the database
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("""UPDATE Exercise SET reps = ?, sets = ?, intensity = ? WHERE id = ?""",
                   (reps, sets, intensity, exercise_id))
 
     def save_exercise_data(self):
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("INSERT INTO Exercise"
                   " (training_program_id, day_of_training, name,"

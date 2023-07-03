@@ -3,6 +3,7 @@ from app.models.training_program import TrainingProgram
 from app.models.exercise import Exercise
 from app.models.muscle import Muscle
 from datetime import date
+from app.database.create_database import DB_PATH
 
 
 class TrainingProgramController:
@@ -25,7 +26,7 @@ class TrainingProgramController:
         self.program_day_of_training = self.user_program.get_day_of_training()
 
     def load_recent_program(self):
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("SELECT * FROM TrainingProgram WHERE user_id=?", (self.user_id,))
         program_data = c.fetchone()
@@ -39,7 +40,7 @@ class TrainingProgramController:
         return self.user_program
 
     def get_today_exercises(self):
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("SELECT * FROM Exercise WHERE training_program_id=? AND day_of_training=?",
                   (self.user_program.id, self.user_program.day_of_training))
@@ -128,6 +129,12 @@ class TrainingProgramController:
         training_program = TrainingProgram(program_id, user_id, program_name, day_of_training=1, duration=duration)
         training_program.save_new_program_data()
 
+    @staticmethod
+    def new_training(user_id, duration, day_of_training):
+        need_new_program = (duration == day_of_training)
+        if need_new_program:
+            TrainingProgramController.create_program(user_id)
+
     # def create_exercise(self, name, sets, repetitions, intensity, muscle):
     #     exe = Exercise(name, sets, repetitions, intensity)
     #     self.exercises_dict[muscle].append(exe)
@@ -140,7 +147,7 @@ class TrainingProgramController:
 
     @staticmethod
     def get_new_program_id():
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("SELECT MAX(id) FROM TrainingProgram")
         max_id = c.fetchone()[0]

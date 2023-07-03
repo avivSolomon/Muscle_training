@@ -1,13 +1,15 @@
 from app.controller.training_program_controller import TrainingProgramController
 from app.models.muscle import Muscle
 from app.models.exercise import Exercise
+from app.database.create_database import DB_PATH
 
 import sqlite3
 from datetime import date
 
+print(DB_PATH)
 
 class User:
-    def __init__(self, user_id, name, email, password, height, weight, muscles=None, program=None):
+    def __init__(self, user_id, name, email, password, height, weight):
         # Login Information
         self.id = user_id
         self.name = name
@@ -76,7 +78,7 @@ class User:
         self.update_user_data()
 
     def get_muscle_by_name(self, muscle_name):
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("SELECT * FROM Muscle WHERE user_id = ? AND name = ?", (self.id, muscle_name))
         muscle_data = c.fetchone()
@@ -86,7 +88,7 @@ class User:
         return muscle_data
 
     def get_all_muscles(self):
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("SELECT * FROM Muscle WHERE user_id = ?", (self.id,))
         muscles_data = c.fetchall()
@@ -106,7 +108,7 @@ class User:
     #     TrainingProgramController.create_program(user_id=self.id, duration=duration, exercises=exercises_list)
 
     def save_new_user_data(self):
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("""INSERT INTO Users (id, name, email, password, height, weight, bmi)
                     VALUES (?, ?, ?, ?, ?, ?, ?)""",
@@ -115,21 +117,21 @@ class User:
         conn.close()
 
     def update_user_data(self):
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("""UPDATE Users SET name = ?, email = ?, password = ?, height = ?,
          weight = ?, bmi = ? WHERE id = ?""",
                   (self.name, self.email, self.password, self.height, self.weight, self.bmi, self.id))
         conn.commit()
 
-    def print_val(self):
-        for cur_muscle in self.muscles:
-            print(cur_muscle)
+    # def print_val(self):
+    #     for cur_muscle in self.muscles:
+    #         print(cur_muscle)
 
 
 if __name__ == '__main__':
     # check connection to database
-    conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute("""SELECT * FROM Users""")
     print(c.fetchall())
