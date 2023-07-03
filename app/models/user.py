@@ -19,9 +19,6 @@ class User:
         self.height = height
         self.weight = weight
         self.bmi = self.weight / ((self.height / 100) ** 2)
-        # muscle and program information
-        # self.muscles = muscles
-        # self.set_program()
         # save user
         self.update_user_data()
 
