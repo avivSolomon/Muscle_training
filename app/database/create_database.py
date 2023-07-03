@@ -118,11 +118,11 @@ def show_all_data():
 
 
 if __name__ == '__main__':
-    create_tables()
-    conn = sqlite3.connect('muscle_training.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM Users')
-    print(cursor.fetchall())
+    # create_tables()
+    # conn = sqlite3.connect('muscle_training.db')
+    # cursor = conn.cursor()
+    # cursor.execute('SELECT * FROM Users')
+    # print(cursor.fetchall())
     # print(cursor.fetchall())
     # cursor.execute('INSERT INTO Users (name, email, password, height, weight, bmi) VALUES (?, ?, ?, ?, ?, ?)',
     #                ('John', 'john@gmail.com', '123456', 180, 80, 24.69))
@@ -182,7 +182,7 @@ if __name__ == '__main__':
     #                (2, 5, '2020-01-01'))
     # cursor.execute('INSERT INTO ExerciseHistory (user_id, exercise_id, workout_date) VALUES (?, ?, ?)',
     #                (2, 6, '2020-01-01'))
-    conn.commit()
-    conn.close()
+    # conn.commit()
+    # conn.close()
 
     show_all_data()

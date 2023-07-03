@@ -17,8 +17,32 @@ class TrainingProgramController:
 
     exercises_list = list(exercises_dict.values())
 
-    def __init__(self):
-        self.cur_program = None
+    def __init__(self, user_id):
+        self.user_id = user_id
+        self.user_program = self.load_recent_program()
+
+    def load_recent_program(self):
+        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        c = conn.cursor()
+        c.execute("SELECT * FROM TrainingProgram WHERE user_id=?", (self.user_id,))
+        program_data = c.fetchone()
+        conn.close()
+        if program_data is None:
+            return None
+        program_id, user_id, name, day_of_training, duration = program_data
+        return TrainingProgram(program_id, user_id, name, day_of_training, duration)
+
+    def get_user_program(self):
+        return self.user_program
+
+    def get_today_exercises(self):
+        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        c = conn.cursor()
+        c.execute("SELECT * FROM Exercise WHERE training_program_id=? AND day_of_training=?",
+                  (self.user_program.id, self.user_program.day_of_training))
+        exercises_data = c.fetchall()
+        conn.close()
+        return exercises_data
 
     @staticmethod
     def standard_program_list():
@@ -57,8 +81,8 @@ class TrainingProgramController:
                 key = TrainingProgramController.get_key_value(TrainingProgramController.exercises_dict, name)
                 intensity = min([intensity_dict[k] for k in key]) if key is not None else 1
                 Exercise(program_id, day_of_training, name, intensity)
-
-        TrainingProgram(program_id, user_id, program_name, day_of_training=1, duration=duration)
+        training_program = TrainingProgram(program_id, user_id, program_name, day_of_training=1, duration=duration)
+        training_program.save_new_program_data()
 
 
 

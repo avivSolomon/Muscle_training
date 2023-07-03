@@ -28,8 +28,10 @@ class User:
                "user_name: " + self.name + "\n" + \
                "height: " + str(self.height) + "\n" + \
                "weight: " + str(self.weight) + "\n" + \
-               "bmi: " + str(self.bmi) + "\n" + \
-               "muscles: " + str(self.muscles)
+               "bmi: " + str(self.bmi) + "\n"
+
+    def get_id(self):
+        return self.id
 
     def get_name(self):
         return self.name

@@ -4,6 +4,7 @@ from app.views.training_program_view import TrainingProgramView
 
 class UserView:
     def __init__(self):
+        self.user_id = None
         self.user_controller = UserController()
         self.training_program_view = None
 
@@ -33,6 +34,7 @@ class UserView:
         # Authenticate user against stored credentials
         if self.user_controller.authenticate_user(email, password):
             print("Login successful. Welcome!")
+            self.user_id = self.user_controller.get_current_user().get_id()
             self.user_dashboard()
         else:
             print("Invalid email or password.")
@@ -49,7 +51,7 @@ class UserView:
             if choice == "1":
                 self.manage_profile()
             elif choice == "2":
-                self.training_program_view = TrainingProgramView()
+                self.training_program_view = TrainingProgramView(self.user_id)
             elif choice == "3":
                 break
             else:

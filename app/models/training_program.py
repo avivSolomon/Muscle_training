@@ -11,7 +11,10 @@ class TrainingProgram:
         self.name = name
         self.duration = duration
         # self.exercises = exercises
-        self.save_program_data()
+
+    def __str__(self):
+        return f"Training Program: {self.name}\nDay Of Training: {self.day_of_training}\n" \
+               f"Duration: {self.duration} days"
 
     def get_name(self):
         return self.name
@@ -48,7 +51,7 @@ class TrainingProgram:
 
         return program_details
 
-    def save_program_data(self):
+    def save_new_program_data(self):
         conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
         c = conn.cursor()
         c.execute("INSERT INTO TrainingProgram (user_id, name, day_of_training, duration) VALUES (?, ?, ?, ?)",
