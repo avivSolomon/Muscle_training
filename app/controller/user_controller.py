@@ -1,8 +1,8 @@
 from app.models.user import User
 from app.models.muscle import Muscle
 from app.controller.training_program_controller import TrainingProgramController
+from app.database.create_database import DB_PATH
 
-import sqlite3
 from datetime import datetime
 import sqlite3
 
@@ -23,7 +23,7 @@ class UserController:
 
     @staticmethod
     def get_new_user_id():
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
         cur.execute("SELECT MAX(id) FROM Users")
         max_id = cur.fetchone()[0]
@@ -34,13 +34,13 @@ class UserController:
         user_id = self.get_new_user_id()
         muscles = [Muscle(user_id, name) for name in Muscle.muscle_list]
         TrainingProgramController.create_program(user_id=user_id)
-        new_user = User(user_id, name, email, password, height, weight, muscles)
+        new_user = User(user_id, name, email, password, height, weight)
         new_user.save_new_user_data()
 
 
     @staticmethod
     def get_user_by_email(email):
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM Users WHERE email = ?", (email,))
         user = cursor.fetchone()

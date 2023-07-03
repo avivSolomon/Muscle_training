@@ -1,5 +1,6 @@
-import sqlite3
+import sqlite3, os
 
+DB_PATH = r'C:\Users\Hananel & aviv\PycharmProjects\Muscle_train_program\app\database\muscle_training.db'
 
 def create_tables():
     # Create a connection to the SQLite database

@@ -1,4 +1,4 @@
-from app.controller.muscle_controller import MuscleController
+# from app.controller import MuscleController
 
 class MuscleView:
     def __init__(self):
