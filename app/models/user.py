@@ -71,6 +71,10 @@ class User:
     def get_bmi(self):
         return self.bmi
 
+    def set_bmi(self):
+        self.bmi = self.weight / ((self.height / 100) ** 2)
+        self.update_user_data()
+
     def get_muscle_by_name(self, muscle_name):
         conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
         c = conn.cursor()
