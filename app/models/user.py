@@ -1,15 +1,25 @@
-from app.controller.training_program_controller import TrainingProgramController
-from app.models.muscle import Muscle
-from app.models.exercise import Exercise
 from app.database.create_database import DB_PATH
 
 import sqlite3
-from datetime import date
 
-print(DB_PATH)
 
 class User:
+    """
+    Represents a user with login information and body measurements.
+    """
     def __init__(self, user_id, name, email, password, height, weight):
+        """
+        Initializes a User instance.
+
+        Parameters:
+        - user_id (int): User ID.
+        - name (str): User name.
+        - email (str): User email.
+        - password (str): User password.
+        - height (float): User height in centimeters.
+        - weight (float): User weight in kilograms.
+        """
+
         # Login Information
         self.id = user_id
         self.name = name
@@ -19,9 +29,6 @@ class User:
         self.height = height
         self.weight = weight
         self.bmi = self.weight / ((self.height / 100) ** 2)
-        # muscle and program information
-        # self.muscles = muscles
-        # self.set_program()
         # save user
         self.update_user_data()
 
@@ -78,6 +85,15 @@ class User:
         self.update_user_data()
 
     def get_muscle_by_name(self, muscle_name):
+        """
+        Retrieves muscle data for the user based on the muscle name.
+
+        Parameters:
+        - muscle_name (str): Name of the muscle.
+
+        Returns:
+        - muscle_data (tuple): Muscle data if found, or None if not found.
+        """
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("SELECT * FROM Muscle WHERE user_id = ? AND name = ?", (self.id, muscle_name))
@@ -88,6 +104,12 @@ class User:
         return muscle_data
 
     def get_all_muscles(self):
+        """
+        Retrieves all muscle data for the user.
+
+        Returns:
+        - muscles_data (list): List of muscle data if found, or None if not found.
+        """
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("SELECT * FROM Muscle WHERE user_id = ?", (self.id,))
@@ -96,16 +118,6 @@ class User:
             return None
         conn.close()
         return muscles_data
-
-    def update_muscle(self, muscle_name, points, workout_date=date.today()):
-        for cur_muscle in self.muscles:
-            if cur_muscle.get_name() == muscle_name:
-                cur_muscle.update_points(points, workout_date)
-                return True
-        return False
-
-    # def set_program(user_id=duration=60, exercises_list=None):
-    #     TrainingProgramController.create_program(user_id=self.id, duration=duration, exercises=exercises_list)
 
     def save_new_user_data(self):
         conn = sqlite3.connect(DB_PATH)
@@ -123,10 +135,6 @@ class User:
          weight = ?, bmi = ? WHERE id = ?""",
                   (self.name, self.email, self.password, self.height, self.weight, self.bmi, self.id))
         conn.commit()
-
-    # def print_val(self):
-    #     for cur_muscle in self.muscles:
-    #         print(cur_muscle)
 
 
 if __name__ == '__main__':

@@ -4,7 +4,7 @@ from app.database.create_database import DB_PATH
 
 
 class Exercise:
-    def __init__(self, training_program_id, day_of_training, name, intensity: int = 1, sets=3, reps=10):
+    def __init__(self, training_program_id: int, day_of_training: int, name: str, intensity: int=1, sets=3, reps=10):
         self.id = self.get_new_exercise_id()
         self.training_program_id = training_program_id
         self.day_of_training = day_of_training
@@ -35,10 +35,10 @@ class Exercise:
     def get_name(self):
         return self.name
 
-    def get_duration(self):
+    def get_sets(self):
         return self.sets
 
-    def set_duration(self, sets):
+    def set_sets(self, sets):
         self.sets = sets
         self.save_exercise_data()
 

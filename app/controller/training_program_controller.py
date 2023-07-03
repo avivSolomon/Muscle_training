@@ -7,6 +7,27 @@ from app.database.create_database import DB_PATH
 
 
 class TrainingProgramController:
+    """
+    Controller class for managing training programs.
+
+    Attributes:
+    - exercises_dict (dict): Dictionary mapping muscle names to a list of exercises targeting that muscle.
+    - exercises_list (list): List of lists containing all exercises in the program.
+
+    Methods:
+    - __init__(user_id): Initializes a TrainingProgramController instance for a specific user.
+    - load_recent_program(): Loads the most recent training program for the user.
+    - get_user_program(): Retrieves the user's current training program.
+    - get_today_exercises(): Retrieves the exercises scheduled for the current day of the user's program.
+    - workout(): Performs the workout routine for the current day, updating muscle points and exercise history.
+    - standard_program_list(): Returns a list of standard exercise programs.
+    - intensity_level(user_id): Calculates the intensity level of each muscle for a given user.
+    - get_key_value(exe_dict, value): Retrieves the keys from a dictionary based on a specific value.
+    - create_program(user_id, program_name='new_program', duration=60, exercises=None): Creates a new training program.
+    - new_training(user_id, duration, day_of_training): Checks if a new training program is needed and creates one if necessary.
+    - get_new_program_id(): Generates a new program ID.
+    """
+
     exercises_dict = {'quadriceps': ['squats', 'lunges', 'leg_press'],
                       'hamstrings': ['deadlifts', 'hamstring_curls', 'calf_raises'],
                       'back': ['pull_ups', 'rows', 'lat_pull_downs', 'planks'],
@@ -26,6 +47,13 @@ class TrainingProgramController:
         self.program_day_of_training = self.user_program.get_day_of_training()
 
     def load_recent_program(self):
+        """
+        Loads the most recent training program for the user.
+
+        Returns:
+        - user_program (TrainingProgram or None): The most recent TrainingProgram instance
+                                                    for the user,or None if no program is found.
+        """
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("SELECT * FROM TrainingProgram WHERE user_id=?", (self.user_id,))
@@ -40,6 +68,12 @@ class TrainingProgramController:
         return self.user_program
 
     def get_today_exercises(self):
+        """
+        Retrieves the exercises scheduled for the current day of the user's program.
+
+        Returns:
+        - exercises_data (list): List of exercises data for the current day of training.
+        """
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("SELECT * FROM Exercise WHERE training_program_id=? AND day_of_training=?",
@@ -49,9 +83,14 @@ class TrainingProgramController:
         return exercises_data
 
     def workout(self):
+        """
+        Performs the workout routine for the current day,
+         updating the program training day, muscle points and exercise history.
+        """
+
         # get exercise_id, name, points from exercise table for each exercise in daily_workout
         # update points for each muscle in muscles table
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("""SELECT Exercise.id, Exercise.value_points,
                             Exercise.name, Exercise.intensity,
@@ -91,6 +130,12 @@ class TrainingProgramController:
 
     @staticmethod
     def standard_program_list():
+        """
+        Returns a list of standard exercise programs.
+
+        Returns:
+        - program_list (list): List of lists containing exercises for each day of the program.
+        """
         a = ['squats', 'lunges', 'leg_press', 'deadlifts', 'hamstring_curls', 'calf_raises',
              'pull_ups', 'rows', 'lat_pull_downs', 'bicep_curls', 'hammer_curls']
         b = ['bench_press', 'push_ups', 'chest_flies', 'dumbbell_press', 'shoulder_press',
@@ -100,6 +145,12 @@ class TrainingProgramController:
 
     @staticmethod
     def intensity_level(user_id):
+        """
+        Calculates the intensity level of each muscle for a given user.
+
+        Returns:
+        - muscle_intensity_level_dict (dict): Dictionary mapping muscle names to their intensity levels.
+        """
         muscle_intensity_level_dict = Muscle.get_all_the_muscles_points(user_id)
         for muscle in muscle_intensity_level_dict.keys():
             muscle_intensity_level_dict[muscle] = len(str(int(muscle_intensity_level_dict[muscle])))
@@ -107,15 +158,37 @@ class TrainingProgramController:
 
     @staticmethod
     def get_key_value(exe_dict, value):
+        """
+        Retrieves the keys from a dictionary based on a specific value.
+
+        Parameters:
+        - exe_dict (dict): Dictionary to search.
+        - value: Value to search for.
+
+        Returns:
+        - key_list (list): List of keys associated with the specified value,
+        or None.
+        """
         key_list = []
         for k, v in exe_dict.items():
             if value in v:
                 key_list.append(k)
-        return key_list
+        return key_list if len(key_list)>0 else None
 
     @staticmethod
     def create_program(user_id, program_name='new_program', duration=60,
                        exercises: list[list[str]] = None):
+        """
+        Creates a new training program.
+
+        Parameters:
+        - user_id (int): ID of the user.
+        - program_name (str): Name of the program (default: 'new_program').
+        - duration (int): Duration of the program in days (default: 60).
+        - exercises (list): List of lists containing exercises for each day of the program.
+                            If None, the standard program list will be used.
+
+        """
         program_id = TrainingProgramController.get_new_program_id()
         intensity_dict = TrainingProgramController.intensity_level(user_id)
         if exercises is None:
@@ -135,16 +208,6 @@ class TrainingProgramController:
         if need_new_program:
             TrainingProgramController.create_program(user_id)
 
-    # def create_exercise(self, name, sets, repetitions, intensity, muscle):
-    #     exe = Exercise(name, sets, repetitions, intensity)
-    #     self.exercises_dict[muscle].append(exe)
-
-    def get_exercise_by_name(self, name):
-        for exercise in self.cur_program:
-            if exercise.get_name() == name:
-                return exercise
-        return None
-
     @staticmethod
     def get_new_program_id():
         conn = sqlite3.connect(DB_PATH)
@@ -153,9 +216,6 @@ class TrainingProgramController:
         max_id = c.fetchone()[0]
         conn.close()
         return max_id + 1 if max_id is not None else 1
-
-
-# Additional code for training program controller functionality
 
 
 if __name__ == "__main__":

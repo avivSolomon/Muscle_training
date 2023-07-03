@@ -91,8 +91,6 @@ class UserView:
             print("Profile updated successfully.")
 
 
-# Additional code for user interface related to user management
-
 if __name__ == "__main__":
     user_view = UserView()
 
