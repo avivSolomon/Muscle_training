@@ -1,8 +1,9 @@
 from app.controller.training_program_controller import TrainingProgramController
 from app.models.muscle import Muscle
+from app.models.exercise import Exercise
+
 import sqlite3
 from datetime import date
-from app.models.exercise import Exercise
 
 
 class User:
@@ -31,9 +32,6 @@ class User:
                "bmi: " + str(self.bmi) + "\n" + \
                "muscles: " + str(self.muscles) + "\n" + \
                "program: " + str(self.program)
-
-    def get_id(self):
-        return self.id
 
     def get_name(self):
         return self.name
@@ -109,7 +107,7 @@ class User:
                 if self.bmi > 30 else ...
         self.program = program
 
-
+    def
 
     def workout(self):
         # get exercise_id, name, points from exercise table for each exercise in daily_workout
@@ -160,6 +158,7 @@ class User:
                   (self.id, self.name, self.email, self.password, self.height, self.weight, self.bmi))
         conn.commit()
         conn.close()
+
 
 
     def update_user_data(self):

@@ -4,16 +4,14 @@ import sqlite3
 
 class TrainingProgram:
 
-    def __init__(self, program_id, user_id, name, day_of_training, duration, exercises):
+    def __init__(self, program_id, user_id, name, day_of_training, duration):
         self.id = program_id
         self.user_id = user_id
         self.day_of_training = day_of_training
         self.name = name
         self.duration = duration
-        self.exercises = exercises
+        # self.exercises = exercises
         self.save_program_data()
-
-
 
     def get_name(self):
         return self.name

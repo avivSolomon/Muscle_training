@@ -19,18 +19,31 @@ class TrainingProgramController:
     def __init__(self):
         self.cur_program = None
 
-    def create_program(self, user_id, name='new_program', duration=60, exercises: list[str] = None):
+    def create_program(self, user_id, name='new_program', duration=60, exercises: list[list[str]] = None):
         program_id = self.get_new_program_id()
-        day_of_training = 1
+        program = []
         if exercises is None:
-            init_exercises = [Exercise(program_id, day_of_training, name) for name in self.exercises_list]
-        else:
-            init_exercises = [Exercise(program_id, day_of_training, name) for name in exercises]
+            for day_of_training in range(1, duration+1):
+                daily_workout = self.standard_program_list()[day_of_training % 2]
+                program.append(
+                    [Exercise(program_id, day_of_training, name) for name in daily_workout])
+        # else:
 
-        return TrainingProgram(program_id, user_id, name, day_of_training, duration, init_exercises)
+        #     init_exercises = [Exercise(program_id, day_of_training, name) for name in exercises]
 
-    # standard_program_list = [create_program(user_id=? ,name=key, exercises=val) for key, val in
-    #                          exercises_dict.items()]
+        TrainingProgram(program_id, user_id, name, day_of_training=1, duration=duration)
+
+    @staticmethod
+    def standard_program_list():
+        a = ['squats', 'lunges', 'leg_press', 'deadlifts', 'hamstring_curls', 'calf_raises',
+             'pull_ups', 'rows', 'lat_pulldowns', 'bicep_curls', 'hammer_curls']
+
+        b = ['bench_press', 'push_ups', 'chest_flies', 'dumbbell_press', 'shoulder_press',
+             'lateral_raises','front_raises', 'triceps_dips', 'triceps_pushdowns', 'planks',
+             'sit_ups', 'russian_twists']
+
+        standard = [a,b]
+        return standard
 
     # def create_exercise(self, name, sets, repetitions, intensity, muscle):
     #     exe = Exercise(name, sets, repetitions, intensity)
