@@ -19,6 +19,13 @@ class TrainingProgram:
     def get_name(self):
         return self.name
 
+    def get_day_of_training(self):
+        return self.day_of_training
+
+    def set_day_of_training(self, day_of_training):
+        self.day_of_training = day_of_training
+        self.update_program_data()
+
     def get_duration(self):
         return self.duration
 
@@ -50,6 +57,13 @@ class TrainingProgram:
             program_details += f"- {exercise.get_name()}\n"
 
         return program_details
+
+    def update_program_data(self):
+        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        c = conn.cursor()
+        c.execute("UPDATE TrainingProgram SET day_of_training = ? WHERE id = ?", (self.day_of_training, self.id))
+        conn.commit()
+        conn.close()
 
     def save_new_program_data(self):
         conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')

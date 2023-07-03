@@ -105,48 +105,6 @@ class User:
     # def set_program(user_id=duration=60, exercises_list=None):
     #     TrainingProgramController.create_program(user_id=self.id, duration=duration, exercises=exercises_list)
 
-
-    def workout(self):
-        # get exercise_id, name, points from exercise table for each exercise in daily_workout
-        # update points for each muscle in muscles table
-        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
-        c = conn.cursor()
-        # get the day of the program
-        c.execute("""SELECT day_of_training FROM TrainingProgram WHERE user_id = ?""",
-                  (self.id,))
-        self.program_day = c.fetchone()[0]
-        c.execute("""SELECT Exercise.id, Exercise.value_points, Exercise.name
-                    FROM Exercise
-                    INNER JOIN DailyTrainingProgram ON Exercise.id = DailyTrainingProgram.exercise_id
-                    INNER JOIN TrainingProgram ON DailyTrainingProgram.training_program_id = TrainingProgram.id
-                    WHERE TrainingProgram.user_id = ? AND DailyTrainingProgram.day = ?""",
-                  (self.id, self.program_day))
-        daily_workout = c.fetchall()
-        for exercise in daily_workout:
-            print(exercise[2], end=', ')
-        change_list = list(input(""" If there are exercises that did not perform as planned, 
-                                    \nwrite down the names of the exercises here 
-                                    \nSeparate with the help of "," between drill and drill if there are:""").split(","))
-        user_muscles = Muscle.get_muscles_by_user_id(self.id)
-        for exercise in daily_workout:
-            if exercise[2] in change_list:
-                Exercise.update_exe_details(exercise[0])
-            exe_id, points, exe_name = exercise
-            for muscle in user_muscles:
-                if exe_name in TrainingProgramController.exercises_dict[muscle[1]]:
-                    muscle_id = muscle[0]
-                    update_points = muscle[2] + points
-                    workout_date = date.today()
-                    rest_date = Muscle.calculate_rest_time(points)
-                    c.execute("""UPDATE Muscle SET points = ?, workout_date = ?, rest_date = ?
-                                WHERE id = ?""",
-                                (update_points, workout_date, rest_date, muscle_id))
-                    c.execute("""INSERT INTO ExerciseHistory (user_id, exercise_id, workout_date)
-                                VALUES (?, ?, ?)""",
-                                (self.id, exe_id, workout_date))
-                    conn.commit()
-        conn.close()
-
     def save_new_user_data(self):
         conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
         c = conn.cursor()

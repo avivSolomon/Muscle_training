@@ -1,5 +1,4 @@
 from app.controller.training_program_controller import TrainingProgramController
-import sqlite3
 
 
 class TrainingProgramView:
@@ -13,7 +12,8 @@ class TrainingProgramView:
             print("\n1. Show Today's Exercises")
             print("2. Show Training Program Details")
             print("3. Create New Training Program")
-            print("4. Back")
+            print("4. Workout")
+            print("5. Back")
 
             choice = input("Enter your choice: ")
             if choice == "1":
@@ -24,6 +24,8 @@ class TrainingProgramView:
                 self.training_program_controller.create_program(self.user_id)
                 print("New training program created.")
             elif choice == "4":
+                self.training_program_controller.workout()
+            elif choice == "5":
                 break
 
     def display_today_exercises(self):
@@ -60,7 +62,7 @@ class TrainingProgramView:
 # Additional code for user interface related to training program management
 
 if __name__ == "__main__":
-    a = TrainingProgramView(5)
-    a.user_program_dashboard()
+    a = TrainingProgramView(1)
+    # a.user_program_dashboard()
 
 

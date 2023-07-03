@@ -88,7 +88,7 @@ class Muscle:
 if __name__ == '__main__':
     conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
     c = conn.cursor()
-    c.execute("SELECT * FROM Muscle where user_id=5")
+    c.execute("SELECT * FROM Muscle where user_id=1")
     print(c.fetchall())
     conn.close()
     # while True:

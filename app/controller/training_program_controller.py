@@ -2,6 +2,7 @@ import sqlite3
 from app.models.training_program import TrainingProgram
 from app.models.exercise import Exercise
 from app.models.muscle import Muscle
+from datetime import date
 
 
 class TrainingProgramController:
@@ -13,13 +14,15 @@ class TrainingProgramController:
                       'shoulders': ['shoulder_press', 'lateral_raises', 'front_raises'],
                       'triceps': ['triceps_dips', 'triceps_push_downs'],
                       'abdominal': ['planks', 'sit_ups', 'russian_twists'],
-                      'cardiopulmonary_endurance': ['running', 'cycling', 'swimming']}
+                      'cardiopulmonary_endurance': ['running', 'cycling', 'swimming'],
+                      'calves': ['calf_raises', 'jumping_jacks']}
 
     exercises_list = list(exercises_dict.values())
 
     def __init__(self, user_id):
         self.user_id = user_id
         self.user_program = self.load_recent_program()
+        self.program_day_of_training = self.user_program.get_day_of_training()
 
     def load_recent_program(self):
         conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
@@ -43,6 +46,47 @@ class TrainingProgramController:
         exercises_data = c.fetchall()
         conn.close()
         return exercises_data
+
+    def workout(self):
+        # get exercise_id, name, points from exercise table for each exercise in daily_workout
+        # update points for each muscle in muscles table
+        conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
+        c = conn.cursor()
+        c.execute("""SELECT Exercise.id, Exercise.value_points,
+                            Exercise.name, Exercise.intensity,
+                            Exercise.sets, Exercise.reps
+                            FROM Exercise
+                            JOIN TrainingProgram ON TrainingProgram.day_of_training = Exercise.day_of_training
+                            WHERE TrainingProgram.user_id = ?""", (self.user_id,))
+        daily_workout = c.fetchall()
+        # print(daily_workout)
+        for exercise in daily_workout:
+            print(f"exercise name: {exercise[2]}\n exercise intensity: {exercise[3]}\n exercise sets: {exercise[4]}\n "
+                  f"exercise reps: {exercise[5]}\n")
+        change_list = list(input(""" If there are exercises that did not perform as planned, 
+                                    \nwrite down the names of the exercises here 
+                                    \nSeparate with the help of "," between drill and drill if there are:""").split(
+            ","))
+        user_muscles = Muscle.get_muscles_by_user_id(self.user_id)
+        for exercise in daily_workout:
+            if exercise[2] in change_list:
+                Exercise.update_exe_details(exercise[0])
+            exe_id, points, exe_name = exercise[0], exercise[1], exercise[2]
+            for muscle in user_muscles:
+                if exe_name in TrainingProgramController.exercises_dict[muscle[1]]:
+                    muscle_id = muscle[0]
+                    update_points = muscle[2] + points
+                    workout_date = date.today()
+                    rest_date = Muscle.calculate_rest_time(points)
+                    c.execute("""UPDATE Muscle SET points = ?, workout_date = ?, rest_time = ?
+                                WHERE user_id = ?""",
+                              (update_points, workout_date, rest_date, muscle_id))
+                    c.execute("""INSERT INTO ExerciseHistory (user_id, exercise_id, workout_date)
+                                VALUES (?, ?, ?)""",
+                              (self.user_id, exe_id, workout_date))
+                    conn.commit()
+        conn.close()
+        self.user_program.set_day_of_training(self.program_day_of_training + 1)
 
     @staticmethod
     def standard_program_list():
@@ -75,7 +119,7 @@ class TrainingProgramController:
         intensity_dict = TrainingProgramController.intensity_level(user_id)
         if exercises is None:
             exercises = TrainingProgramController.standard_program_list()
-        for day_of_training in range(1, duration+1):
+        for day_of_training in range(1, duration + 1):
             daily_workout = exercises[day_of_training % len(exercises)]
             for name in daily_workout:
                 key = TrainingProgramController.get_key_value(TrainingProgramController.exercises_dict, name)
@@ -83,8 +127,6 @@ class TrainingProgramController:
                 Exercise(program_id, day_of_training, name, intensity)
         training_program = TrainingProgram(program_id, user_id, program_name, day_of_training=1, duration=duration)
         training_program.save_new_program_data()
-
-
 
     # def create_exercise(self, name, sets, repetitions, intensity, muscle):
     #     exe = Exercise(name, sets, repetitions, intensity)
@@ -105,11 +147,10 @@ class TrainingProgramController:
         conn.close()
         return max_id + 1 if max_id is not None else 1
 
+
 # Additional code for training program controller functionality
 
 
 if __name__ == "__main__":
-    # training_program_controller = TrainingProgramController()
-    intensity_dict = TrainingProgramController.intensity_level(5)
-    print(intensity_dict)
+    pass
 
