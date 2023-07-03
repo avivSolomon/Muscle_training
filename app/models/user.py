@@ -17,7 +17,6 @@ class User:
         self.height = height
         self.weight = weight
         self.bmi = self.weight / ((self.height / 100) ** 2)
-        self.intensity = self.intensity_level()
         # muscle and program information
         self.muscles = muscles
         self.set_program(program)
@@ -30,8 +29,7 @@ class User:
                "height: " + str(self.height) + "\n" + \
                "weight: " + str(self.weight) + "\n" + \
                "bmi: " + str(self.bmi) + "\n" + \
-               "muscles: " + str(self.muscles) + "\n" + \
-               "program: " + str(self.program)
+               "muscles: " + str(self.muscles)
 
     def get_name(self):
         return self.name
@@ -102,13 +100,9 @@ class User:
                 return True
         return False
 
-    def get_program(self):
-        return self.program
+    def set_program(self, duration=60, exercises_list=None):
+        TrainingProgramController.create_program(user_id=self.id, duration=duration, exercises=exercises_list)
 
-    def set_program(self, program=None):
-        if program is None:
-            program = TrainingProgramController.create_program(user_id=self.id)
-        self.program = program
 
     def workout(self):
         # get exercise_id, name, points from exercise table for each exercise in daily_workout
@@ -159,8 +153,6 @@ class User:
                   (self.id, self.name, self.email, self.password, self.height, self.weight, self.bmi))
         conn.commit()
         conn.close()
-
-
 
     def update_user_data(self):
         conn = sqlite3.connect(r'C:\Users\ariya\PycharmProjects\Muscle_training\app\database\muscle_training.db')
