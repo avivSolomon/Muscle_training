@@ -69,6 +69,8 @@ class Exercise:
         c = conn.cursor()
         c.execute("""UPDATE Exercise SET reps = ?, sets = ?, intensity = ? WHERE id = ?""",
                   (reps, sets, intensity, exercise_id))
+        conn.commit()
+        conn.close()
         return round(sets * intensity * reps / 30)
 
     def save_exercise_data(self):

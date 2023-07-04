@@ -92,32 +92,27 @@ class TrainingProgramController:
         # get all the muscles details of the user by the user id ->list[list]
         user_muscles = Muscle.get_muscles_by_user_id(self.user_id)
         # get all the exercises for the current day
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("""SELECT Exercise.id, Exercise.value_points,
-                            Exercise.name, Exercise.intensity,
-                            Exercise.sets, Exercise.reps
-                            FROM Exercise
-                            JOIN TrainingProgram ON TrainingProgram.day_of_training = Exercise.day_of_training
-                            WHERE TrainingProgram.user_id = ? AND TrainingProgram.id = MAX(id) FROM TrainingProgram)""", (self.user_id,))
-        daily_workout = c.fetchall()
+        daily_workout = self.get_today_exercises()
         # for each exercise in daily_workout, ask the user if we need to update the exercise
         # if yes then update the exercise
         for exercise in daily_workout:
-            points = exercise[1]
-            print(f"exercise name: {exercise[2]}\n exercise intensity: {exercise[3]}\n exercise sets: {exercise[4]}\n "
-                  f"exercise reps: {exercise[5]}\n")
+            points = exercise[7]
+            print(f"exercise name: {exercise[3]}\n exercise intensity: {exercise[4]}\n exercise sets: {exercise[5]}\n "
+                  f"exercise reps: {exercise[6]}\n")
             while True:
-                change = input(f"Was the exercise {exercise[2]} carried out as planned?"
+                change = input(f"Was the exercise {exercise[3]} carried out as planned?"
                                f" (Yes or No):").lower()
-                if change in ('yes', 'no', ""):
-                    if change == 'no':
-                        points = Exercise.update_exe_details(exercise[0])
+                if change == 'no':
+                    points = Exercise.update_exe_details(exercise[0])
+                    break
+                elif change == 'yes' or change == '':
                     break
                 else:
                     print('\nPlease enter a valid input (yes or no) to continue\n')
-            exe_id, exe_name = exercise[0], exercise[2]
+            exe_id, exe_name = exercise[0], exercise[3]
             # save the exercise to the exercise history
+            conn = sqlite3.connect(DB_PATH)
+            c = conn.cursor()
             c.execute("""INSERT INTO ExerciseHistory (user_id, exercise_id, workout_date)
                                     VALUES (?, ?, ?)""",
                       (self.user_id, exe_id, workout_date))
