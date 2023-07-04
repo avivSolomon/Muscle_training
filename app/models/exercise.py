@@ -68,6 +68,7 @@ class Exercise:
         c = conn.cursor()
         c.execute("""UPDATE Exercise SET reps = ?, sets = ?, intensity = ? WHERE id = ?""",
                   (reps, sets, intensity, exercise_id))
+        return round(sets * intensity * reps / 30)
 
     def save_exercise_data(self):
         conn = sqlite3.connect(DB_PATH)

@@ -56,7 +56,7 @@ class TrainingProgramController:
         """
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
-        c.execute("SELECT * FROM TrainingProgram WHERE user_id=?", (self.user_id,))
+        c.execute("SELECT * FROM TrainingProgram WHERE user_id=? AND id = (SELECT MAX(id) FROM TrainingProgram)", (self.user_id,))
         program_data = c.fetchone()
         conn.close()
         if program_data is None:
@@ -87,9 +87,11 @@ class TrainingProgramController:
         Performs the workout routine for the current day,
          updating the program training day, muscle points and exercise history.
         """
-
-        # get exercise_id, name, points from exercise table for each exercise in daily_workout
-        # update points for each muscle in muscles table
+        # get the data of today (the workout date)
+        workout_date = date.today()
+        # get all the muscles details of the user by the user id ->list[list]
+        user_muscles = Muscle.get_muscles_by_user_id(self.user_id)
+        # get all the exercises for the current day
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("""SELECT Exercise.id, Exercise.value_points,
@@ -99,33 +101,39 @@ class TrainingProgramController:
                             JOIN TrainingProgram ON TrainingProgram.day_of_training = Exercise.day_of_training
                             WHERE TrainingProgram.user_id = ?""", (self.user_id,))
         daily_workout = c.fetchall()
-        # print(daily_workout)
+        # for each exercise in daily_workout, ask the user if we need to update the exercise
+        # if yes then update the exercise
         for exercise in daily_workout:
+            points = exercise[1]
             print(f"exercise name: {exercise[2]}\n exercise intensity: {exercise[3]}\n exercise sets: {exercise[4]}\n "
                   f"exercise reps: {exercise[5]}\n")
-        change_list = list(input(""" If there are exercises that did not perform as planned, 
-                                    \nwrite down the names of the exercises here 
-                                    \nSeparate with the help of "," between drill and drill if there are:""").split(
-            ","))
-        user_muscles = Muscle.get_muscles_by_user_id(self.user_id)
-        for exercise in daily_workout:
-            if exercise[2] in change_list:
-                Exercise.update_exe_details(exercise[0])
-            exe_id, points, exe_name = exercise[0], exercise[1], exercise[2]
+            while True:
+                change = input(f"Was the exercise {exercise[2]} carried out as planned?"
+                               f" (Yes or No):").lower()
+                if change in ('yes', 'no', ""):
+                    if change == 'no':
+                        points = Exercise.update_exe_details(exercise[0])
+                    break
+                else:
+                    print('\nPlease enter a valid input (yes or no) to continue\n')
+            exe_id, exe_name = exercise[0], exercise[2]
+            # save the exercise to the exercise history
+            c.execute("""INSERT INTO ExerciseHistory (user_id, exercise_id, workout_date)
+                                    VALUES (?, ?, ?)""",
+                      (self.user_id, exe_id, workout_date))
+            conn.commit()
+            # update points, workout_date and ret_time for each muscle in muscles table
             for muscle in user_muscles:
                 if exe_name in TrainingProgramController.exercises_dict[muscle[1]]:
                     muscle_id = muscle[0]
                     update_points = muscle[2] + points
-                    workout_date = date.today()
                     rest_date = Muscle.calculate_rest_time(points)
                     c.execute("""UPDATE Muscle SET points = ?, workout_date = ?, rest_time = ?
                                 WHERE user_id = ?""",
                               (update_points, workout_date, rest_date, muscle_id))
-                    c.execute("""INSERT INTO ExerciseHistory (user_id, exercise_id, workout_date)
-                                VALUES (?, ?, ?)""",
-                              (self.user_id, exe_id, workout_date))
                     conn.commit()
         conn.close()
+        # add 1 to the day of training
         self.user_program.set_day_of_training(self.program_day_of_training + 1)
 
     def get_muscles_status(self):
@@ -177,7 +185,7 @@ class TrainingProgramController:
         for k, v in exe_dict.items():
             if value in v:
                 key_list.append(k)
-        return key_list if len(key_list)>0 else None
+        return key_list if len(key_list) > 0 else None
 
     @staticmethod
     def create_program(user_id, program_name='new_program', duration=60,
@@ -224,4 +232,3 @@ class TrainingProgramController:
 
 if __name__ == "__main__":
     pass
-

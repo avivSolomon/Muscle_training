@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import datetime, date, timedelta
 import sqlite3
 from app.database.create_database import DB_PATH
 
@@ -31,8 +31,20 @@ class Muscle:
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("SELECT * FROM Muscle WHERE user_id=?", (user_id,))
-        muscles = c.fetchall()
+        result = c.fetchall()
+        muscles = [list(row) for row in result]
+        muscles = Muscle.rest_points_loss(muscles)
         conn.close()
+        return muscles
+
+    @staticmethod
+    def rest_points_loss(muscles):
+        today_date = date.today()
+        for muscle in muscles:
+            work_date = datetime.strptime(muscle[3], '%Y-%m-%d').date()
+            rest = (today_date - work_date).days
+            loss_points = rest//10.5
+            muscle[2] = max(0, muscle[2]-loss_points)
         return muscles
 
     @staticmethod
