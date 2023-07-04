@@ -16,8 +16,8 @@ class User:
         - name (str): User name.
         - email (str): User email.
         - password (str): User password.
-        - height (float): User height in centimeters.
-        - weight (float): User weight in kilograms.
+        - height (int): User height in centimeters.
+        - weight (int): User weight in kilograms.
         """
 
         # Login Information
@@ -31,13 +31,6 @@ class User:
         self.bmi = self.weight / ((self.height / 100) ** 2)
         # save user
         self.update_user_data()
-
-    def __str__(self):
-        return "user_id: " + str(self.id) + "\n" + \
-               "user_name: " + self.name + "\n" + \
-               "height: " + str(self.height) + "\n" + \
-               "weight: " + str(self.weight) + "\n" + \
-               "bmi: " + str(self.bmi) + "\n"
 
     def get_id(self):
         return self.id
