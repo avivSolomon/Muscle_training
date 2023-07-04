@@ -1,9 +1,6 @@
-from users import User
 import data_base
-import muscle
 from gym_manager import GymManager
 from exercises import Exercise
-from datetime import date
 
 
 def main():
@@ -16,8 +13,8 @@ def main():
     # load existing users from data.db to gym_manager V
     gym_manager.load_data()
     # create a new users V
-    # gym_manager.create_user("user1", 180, 70)
-    # gym_manager.create_user("user2", 170, 60)
+    gym_manager.create_user("user1", 180, 70)
+    gym_manager.create_user("user2", 170, 60)
     # gym_manager.create_user("user3", 160, 50)
 
     # get user list V

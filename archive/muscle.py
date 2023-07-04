@@ -7,7 +7,8 @@ class Muscle:
     #     today = date.today()
     #     time.sleep(24*60*60)
 
-    def __init__(self, name, points=0, workout_date=date(1970,1,1), rest_time=date(1970,1,1)):
+    def __init__(self, name, points=0, workout_date=date(1970,1,1),
+                 rest_time=date(1970,1,1)):
         self.name = name
         self.points = points
         self.workout_date = workout_date
