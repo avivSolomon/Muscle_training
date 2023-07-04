@@ -31,49 +31,55 @@ class UserView:
         # Get user details
         # Validate name input
         while True:
-            name = input("Enter your name: ")
-            if not validations.is_valid_name(name):
-                print("Invalid name format (only alphabets allowed).\n")
-            else:
+            try:
+                name = input("Enter your name: ")
+                validations.validate_name(name)
                 break
+            except validations.InvalidNameException as e:
+                print(e)
 
         # Validate email input
         while True:
-            email = input("Enter your email: ")
-            # Validate inputs
-            if not validations.is_valid_email(email):
-                print("Invalid email format.\n")
-            else:
+            try:
+                email = input("Enter your email: ")
+                validations.validate_email(email)
                 break
+            except validations.InvalidEmailException as e:
+                print(e)
 
-        # Validate password input
-        while True:
-            password = input("Enter your password: ")
-            if not validations.is_valid_password(password):
-                print("Invalid password format (minimum 6 characters, alphanumeric).\n")
-            else:
-                break
         # Check if user already exists
         if self.user_controller.get_user_by_email(email) is not None:
             print("User already exists. Please login.\n")
+
         else:
+            # Validate password input
+            while True:
+                try:
+                    password = input("Enter your password: ")
+                    validations.validate_password(password)
+                    break
+                except validations.InvalidPasswordException as e:
+                    print(e)
+
             # Validate height input
             while True:
-                height = input("Enter your height in cm: ")
-                if not validations.is_valid_height(height):
-                    print("Invalid height format (0 < height < 300).\n")
-                else:
+                try:
+                    height = input("Enter your height in cm: ")
+                    validations.validate_height(height)
                     height = int(height)
                     break
+                except validations.InvalidHeightException as e:
+                    print(e)
 
             # Validate weight input
             while True:
-                weight = input("Enter your weight in kg: ")
-                if not validations.is_valid_weight(weight):
-                    print("Invalid weight format (0 < weight < 300).\n")
-                else:
+                try:
+                    weight = input("Enter your weight in kg: ")
+                    validations.validate_weight(weight)
                     weight = int(weight)
                     break
+                except validations.InvalidWeightException as e:
+                    print(e)
 
             self.user_controller.create_user(name, email, password, height, weight)
             print("\nUser created successfully.\n")
@@ -124,55 +130,62 @@ class UserView:
             # Get new details
             # Validate new_name input
             while True:
-                new_name = input("Enter your new name (or press Enter to skip): ")
-                if new_name == "":
+                try:
+                    new_name = input("Enter your new name (or press Enter to skip): ")
+                    if new_name == "":
+                        break
+                    validations.validate_name(new_name)
                     break
-                elif not validations.is_valid_name(new_name):
-                    print("Invalid name format (only alphabets allowed).\n")
-                else:
-                    break
+                except validations.InvalidNameException as e:
+                    print(e)
             # Validate new_email input
             while True:
-                new_email = input("Enter your new email (or press Enter to skip): ")
-                # Validate inputs
-                if new_email == "":
+                try:
+                    new_email = input("Enter your new email (or press Enter to skip): ")
+                    if new_email == "":
+                        break
+                    validations.validate_email(new_email)
                     break
-                elif not validations.is_valid_email(new_email):
-                    print("Invalid email format.\n")
+                except validations.InvalidEmailException as e:
+                    print(e)
                 # check if email already exists
-                elif self.user_controller.get_user_by_email(new_email) is not None:
+                if self.user_controller.get_user_by_email(new_email) is not None:
                     print("User already exists.\n")
                 else:
                     break
             # Validate new_password input
             while True:
-                new_password = input("Enter your new password (or press Enter to skip): ")
-                if new_password == "":
+                try:
+                    new_password = input("Enter your new password (or press Enter to skip): ")
+                    if new_password == "":
+                        break
+                    validations.validate_password(new_password)
                     break
-                elif not validations.is_valid_password(new_password):
-                    print("Invalid password format (minimum 6 characters, alphanumeric).\n")
-                else:
-                    break
+                except validations.InvalidPasswordException as e:
+                    print(e)
+
             # Validate new_height input
             while True:
-                new_height = input("Enter your new height (or press Enter to skip): ")
-                if new_height == "":
-                    break
-                elif not validations.is_valid_height(new_height):
-                    print("Invalid height format (0 < height < 300).\n")
-                else:
+                try:
+                    new_height = input("Enter your new height (or press Enter to skip): ")
+                    if new_height == "":
+                        break
+                    validations.validate_height(new_height)
                     new_height = int(new_height)
                     break
+                except validations.InvalidHeightException as e:
+                    print(e)
             # Validate new_weight input
             while True:
-                new_weight = input("Enter your new weight (or press Enter to skip): ")
-                if new_weight == "":
-                    break
-                elif not validations.is_valid_weight(new_weight):
-                    print("Invalid weight format (0 < weight < 300).\n")
-                else:
+                try:
+                    new_weight = input("Enter your new weight (or press Enter to skip): ")
+                    if new_weight == "":
+                        break
+                    validations.validate_weight(new_weight)
                     new_weight = int(new_weight)
                     break
+                except validations.InvalidWeightException as e:
+                    print(e)
             # Update the user's details in the database
             self.user_controller.update_profile(new_name, new_email, new_password, new_height, new_weight)
             print("\nProfile updated successfully.\n")
