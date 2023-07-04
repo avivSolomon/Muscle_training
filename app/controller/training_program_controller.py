@@ -99,7 +99,7 @@ class TrainingProgramController:
                             Exercise.sets, Exercise.reps
                             FROM Exercise
                             JOIN TrainingProgram ON TrainingProgram.day_of_training = Exercise.day_of_training
-                            WHERE TrainingProgram.user_id = ?""", (self.user_id,))
+                            WHERE TrainingProgram.user_id = ? AND TrainingProgram.id = MAX(id) FROM TrainingProgram)""", (self.user_id,))
         daily_workout = c.fetchall()
         # for each exercise in daily_workout, ask the user if we need to update the exercise
         # if yes then update the exercise

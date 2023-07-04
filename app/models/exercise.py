@@ -61,8 +61,9 @@ class Exercise:
 
     @staticmethod
     def update_exe_details(exercise_id):
-        changes = input('enter the number of reps, sets, and intensity in this order, Separate by ","').split(",")
-        reps, sets, intensity = [int(num) for num in changes]
+        changes = input('enter the number of intensity, sets, and reps in this order,'
+                        ' Separate by ",":  ').split(",")
+        intensity, sets, reps = [int(num) for num in changes]
         # update exercise details in the database
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
