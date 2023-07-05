@@ -1,5 +1,5 @@
 import sqlite3
-from app.database.create_database import DB_PATH
+from app.database.database import DB_PATH
 
 
 class TrainingProgram:

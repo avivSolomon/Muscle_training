@@ -1,11 +1,11 @@
 from datetime import date
 import sqlite3
-from app.database.create_database import DB_PATH
+from app.database.database import DB_PATH
 
 
 class Exercise:
     def __init__(self, training_program_id: int, day_of_training: int, name: str, intensity: int=1, sets=3, reps=10):
-        self.id = self.get_new_exercise_id()
+        self.id = Exercise.get_new_exercise_id()
         self.training_program_id = training_program_id
         self.day_of_training = day_of_training
         self.name = name
@@ -16,15 +16,8 @@ class Exercise:
         self.workout_date = date.today()
         self.save_exercise_data()
 
-    def __str__(self):
-        return "name: " + self.name + "\n" + \
-               "sets: " + str(self.sets) + "\n" + \
-               "reps: " + str(self.reps) + "\n" + \
-               "intensity: " + str(self.intensity) + "\n" + \
-               "value_points: " + str(self.value_points) + "\n" + \
-               "workout_date: " + str(self.workout_date)
-
-    def get_new_exercise_id(self):
+    @staticmethod
+    def get_new_exercise_id():
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute("SELECT MAX(id) FROM Exercise")
@@ -83,6 +76,3 @@ class Exercise:
                    self.intensity, self.sets, self.reps, self.value_points))
         conn.commit()
         conn.close()
-
-
-# Additional code for exercise-related functionality

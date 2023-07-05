@@ -1,7 +1,7 @@
 from app.models.user import User
 from app.models.muscle import Muscle
 from app.controller.training_program_controller import TrainingProgramController
-from app.database.create_database import DB_PATH
+from app.database.database import DB_PATH
 
 import sqlite3
 
@@ -15,8 +15,6 @@ class UserController:
         # self.load_data()
         self.current_user = None
         self.current_user_details = None
-
-
 
     @staticmethod
     def get_new_user_id():
@@ -42,11 +40,10 @@ class UserController:
         - new_user (User): The created User instance.
         """
         user_id = self.get_new_user_id()
-        muscles = [Muscle(user_id, name) for name in Muscle.muscle_list]
+        [Muscle(user_id, name) for name in Muscle.muscle_list]
         TrainingProgramController.create_program(user_id=user_id)
         new_user = User(user_id, name, email, password, height, weight)
         new_user.save_new_user_data()
-
 
     @staticmethod
     def get_user_by_email(email):
@@ -81,7 +78,6 @@ class UserController:
         - authenticated (bool): True if the authentication is successful, False otherwise.
         """
         # Authenticate user against stored credentials
-        # Implement the authentication logic here
         self.current_user_details = self.get_user_by_email(email)
         if self.current_user_details is None:
             return False
@@ -109,11 +105,10 @@ class UserController:
         - new_name (str): New name of the user (optional).
         - new_email (str): New email of the user (optional).
         - new_password (str): New password of the user (optional).
-        - new_height (float): New height of the user in centimeters (optional).
-        - new_weight (float): New weight of the user in kilograms (optional).
+        - new_height (int): New height of the user in centimeters (optional).
+        - new_weight (int): New weight of the user in kilograms (optional).
         """
         # Update the user's details in the database
-        # Implement the update logic here
         user = self.get_current_user()
         user.set_name(new_name) if new_name != '' else user.get_name()
         user.set_email(new_email) if new_email != '' else user.get_email()

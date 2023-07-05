@@ -91,7 +91,9 @@ class UserView:
         # Authenticate user against stored credentials
         if self.user_controller.authenticate_user(email, password):
             print("\nLogin successful. Welcome!")
+            # Set the current user ID
             self.user_id = self.user_controller.get_current_user().get_id()
+            # Redirect to user dashboard
             self.user_dashboard()
         else:
             print("Invalid email or password.\n")
@@ -145,14 +147,13 @@ class UserView:
                     if new_email == "":
                         break
                     validations.validate_email(new_email)
+                    # Check if user already exists
+                    if self.user_controller.get_user_by_email(new_email) is not None:
+                        raise validations.InvalidEmailException("User already exists.")
                     break
                 except validations.InvalidEmailException as e:
                     print(e)
-                # check if email already exists
-                if self.user_controller.get_user_by_email(new_email) is not None:
-                    print("User already exists.\n")
-                else:
-                    break
+
             # Validate new_password input
             while True:
                 try:
@@ -175,6 +176,7 @@ class UserView:
                     break
                 except validations.InvalidHeightException as e:
                     print(e)
+
             # Validate new_weight input
             while True:
                 try:

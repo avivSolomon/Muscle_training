@@ -3,7 +3,7 @@ from app.models.training_program import TrainingProgram
 from app.models.exercise import Exercise
 from app.models.muscle import Muscle
 from datetime import date
-from app.database.create_database import DB_PATH
+from app.database.database import DB_PATH
 
 
 class TrainingProgramController:
@@ -64,6 +64,57 @@ class TrainingProgramController:
         program_id, user_id, name, day_of_training, duration = program_data
         return TrainingProgram(program_id, user_id, name, day_of_training, duration)
 
+    @staticmethod
+    def create_program(user_id, program_name='new_program', duration=60,
+                       exercises: list[list[str]] = None):
+        """
+        Creates a new training program.
+
+        Parameters:
+        - user_id (int): ID of the user.
+        - program_name (str): Name of the program (default: 'new_program').
+        - duration (int): Duration of the program in days (default: 60).
+        - exercises (list): List of lists containing exercises for each day of the program.
+                            If None, the standard program list will be used.
+
+        """
+        program_id = TrainingProgramController.get_new_program_id()
+        intensity_dict = TrainingProgramController.intensity_level(user_id)
+        if exercises is None:
+            exercises = TrainingProgramController.standard_program_list()
+        for day_of_training in range(1, duration + 1):
+            daily_workout = exercises[day_of_training % len(exercises)]
+            for name in daily_workout:
+                key = TrainingProgramController.get_key_value(TrainingProgramController.exercises_dict, name)
+                intensity = min([intensity_dict[k] for k in key]) if key is not None else 1
+                Exercise(program_id, day_of_training, name, intensity)
+        training_program = TrainingProgram(program_id, user_id, program_name, day_of_training=1, duration=duration)
+        training_program.save_new_program_data()
+
+    @staticmethod
+    def get_new_program_id():
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("SELECT MAX(id) FROM TrainingProgram")
+        max_id = c.fetchone()[0]
+        conn.close()
+        return max_id + 1 if max_id is not None else 1
+
+    @staticmethod
+    def standard_program_list():
+        """
+        Returns a list of standard exercise programs.
+
+        Returns:
+        - program_list (list): List of lists containing exercises for each day of the program.
+        """
+        a = ['squats', 'lunges', 'leg_press', 'deadlifts', 'hamstring_curls', 'calf_raises',
+             'pull_ups', 'rows', 'lat_pull_downs', 'bicep_curls', 'hammer_curls']
+        b = ['bench_press', 'push_ups', 'chest_flies', 'dumbbell_press', 'shoulder_press',
+             'lateral_raises', 'front_raises', 'triceps_dips', 'triceps_push_downs', 'planks',
+             'sit_ups', 'russian_twists']
+        return [a, b]
+
     def get_user_program(self):
         return self.user_program
 
@@ -96,20 +147,19 @@ class TrainingProgramController:
         # for each exercise in daily_workout, ask the user if we need to update the exercise
         # if yes then update the exercise
         for exercise in daily_workout:
-            points = exercise[7]
+            exe_id, exe_name, exe_points = exercise[0], exercise[3], exercise[7]
             print(f"exercise name: {exercise[3]}\n exercise intensity: {exercise[4]}\n exercise sets: {exercise[5]}\n "
                   f"exercise reps: {exercise[6]}\n")
             while True:
                 change = input(f"Was the exercise {exercise[3]} carried out as planned?"
                                f" (Yes or No):").lower()
                 if change == 'no':
-                    points = Exercise.update_exe_details(exercise[0])
+                    exe_points = Exercise.update_exe_details(exercise[0])
                     break
                 elif change == 'yes' or change == '':
                     break
                 else:
                     print('\nPlease enter a valid input (yes or no) to continue\n')
-            exe_id, exe_name = exercise[0], exercise[3]
             # save the exercise to the exercise history
             conn = sqlite3.connect(DB_PATH)
             c = conn.cursor()
@@ -121,8 +171,8 @@ class TrainingProgramController:
             for muscle in user_muscles:
                 if exe_name in TrainingProgramController.exercises_dict[muscle[1]]:
                     muscle_id = muscle[0]
-                    update_points = muscle[2] + points
-                    rest_date = Muscle.calculate_rest_time(points)
+                    update_points = muscle[2] + exe_points
+                    rest_date = Muscle.calculate_rest_time(exe_points)
                     c.execute("""UPDATE Muscle SET points = ?, workout_date = ?, rest_time = ?
                                 WHERE user_id = ?""",
                               (update_points, workout_date, rest_date, muscle_id))
@@ -134,21 +184,6 @@ class TrainingProgramController:
     def get_muscles_status(self):
         muscles_status = Muscle.get_muscles_by_user_id(self.user_id)
         return muscles_status
-
-    @staticmethod
-    def standard_program_list():
-        """
-        Returns a list of standard exercise programs.
-
-        Returns:
-        - program_list (list): List of lists containing exercises for each day of the program.
-        """
-        a = ['squats', 'lunges', 'leg_press', 'deadlifts', 'hamstring_curls', 'calf_raises',
-             'pull_ups', 'rows', 'lat_pull_downs', 'bicep_curls', 'hammer_curls']
-        b = ['bench_press', 'push_ups', 'chest_flies', 'dumbbell_press', 'shoulder_press',
-             'lateral_raises', 'front_raises', 'triceps_dips', 'triceps_push_downs', 'planks',
-             'sit_ups', 'russian_twists']
-        return [a, b]
 
     @staticmethod
     def intensity_level(user_id):
@@ -182,47 +217,7 @@ class TrainingProgramController:
                 key_list.append(k)
         return key_list if len(key_list) > 0 else None
 
-    @staticmethod
-    def create_program(user_id, program_name='new_program', duration=60,
-                       exercises: list[list[str]] = None):
-        """
-        Creates a new training program.
 
-        Parameters:
-        - user_id (int): ID of the user.
-        - program_name (str): Name of the program (default: 'new_program').
-        - duration (int): Duration of the program in days (default: 60).
-        - exercises (list): List of lists containing exercises for each day of the program.
-                            If None, the standard program list will be used.
-
-        """
-        program_id = TrainingProgramController.get_new_program_id()
-        intensity_dict = TrainingProgramController.intensity_level(user_id)
-        if exercises is None:
-            exercises = TrainingProgramController.standard_program_list()
-        for day_of_training in range(1, duration + 1):
-            daily_workout = exercises[day_of_training % len(exercises)]
-            for name in daily_workout:
-                key = TrainingProgramController.get_key_value(TrainingProgramController.exercises_dict, name)
-                intensity = min([intensity_dict[k] for k in key]) if key is not None else 1
-                Exercise(program_id, day_of_training, name, intensity)
-        training_program = TrainingProgram(program_id, user_id, program_name, day_of_training=1, duration=duration)
-        training_program.save_new_program_data()
-
-    @staticmethod
-    def new_training(user_id, duration, day_of_training):
-        need_new_program = (duration == day_of_training)
-        if need_new_program:
-            TrainingProgramController.create_program(user_id)
-
-    @staticmethod
-    def get_new_program_id():
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("SELECT MAX(id) FROM TrainingProgram")
-        max_id = c.fetchone()[0]
-        conn.close()
-        return max_id + 1 if max_id is not None else 1
 
 
 if __name__ == "__main__":

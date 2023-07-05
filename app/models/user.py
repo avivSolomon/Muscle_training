@@ -1,4 +1,4 @@
-from app.database.create_database import DB_PATH
+from app.database.database import DB_PATH
 
 import sqlite3
 
@@ -95,22 +95,6 @@ class User:
             return None
         conn.close()
         return muscle_data
-
-    def get_all_muscles(self):
-        """
-        Retrieves all muscle data for the user.
-
-        Returns:
-        - muscles_data (list): List of muscle data if found, or None if not found.
-        """
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("SELECT * FROM Muscle WHERE user_id = ?", (self.id,))
-        muscles_data = c.fetchall()
-        if muscles_data is None:
-            return None
-        conn.close()
-        return muscles_data
 
     def save_new_user_data(self):
         conn = sqlite3.connect(DB_PATH)

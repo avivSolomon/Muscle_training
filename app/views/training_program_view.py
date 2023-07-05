@@ -48,26 +48,6 @@ class TrainingProgramView:
         for muscle in muscle_status:
             print(f"Muscle Name: {muscle[1]}\n Muscle Points: {muscle[2]}\n Workout Date: {muscle[3]}\n Rest Time: {muscle[4]}\n")
 
-    # def manage_training_program(self):
-    #     program = self.create_program()
-    #
-    #     while True:
-    #         print("\n1. Add Exercise")
-    #         print("2. Display Program Details")
-    #         print("3. Back")
-    #
-    #         choice = input("Enter your choice: ")
-    #         if choice == "1":
-    #             self.add_exercise_to_program(program)
-    #         elif choice == "2":
-    #             self.display_program_details(program)
-    #         elif choice == "3":
-    #             break
-    #         else:
-    #             print("Invalid choice. Please try again.")
-
-
-# Additional code for user interface related to training program management
 
 if __name__ == "__main__":
     a = TrainingProgramView(1)
